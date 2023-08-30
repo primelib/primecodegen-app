@@ -22,6 +22,13 @@ type Module struct {
 	SpecFile string `yaml:"spec_file" required:"true"`
 	// SpecScript accepts a script that can be used to fix issues in the openapi spec
 	SpecScript string `yaml:"spec_script"`
+	// GenerateScript is the relative path to the script that generates the code
+	SpecSources []SpecSource `yaml:"spec_sources"`
+}
+
+type SpecSource struct {
+	Name string `yaml:"name" required:"true"`
+	URL  string `yaml:"url" required:"true"`
 }
 
 func LoadProjectConfig(file string) (*Configuration, error) {

@@ -1,6 +1,7 @@
 package primelib
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -23,6 +24,39 @@ func Execute(dir string, module Module) error {
 			return fmt.Errorf("failed to download spec file: %w", err)
 		}
 		log.Info().Str("file", specFile).Msg("downloaded spec file")
+	}
+
+	// download spec sources
+	if len(module.SpecSources) > 0 {
+		mergedData := make(map[string]interface{})
+
+		for _, source := range module.SpecSources {
+			content, err := util.DownloadString(source.URL)
+			if err != nil {
+				return fmt.Errorf("failed to download spec source: %w", err)
+			}
+
+			var jsonData map[string]interface{}
+			err = json.Unmarshal([]byte(content), &jsonData)
+			if err != nil {
+				return fmt.Errorf("failed to parse spec source: %w", err)
+			}
+
+			log.Info().Str("source", source.Name).Str("url", source.URL).Msg("downloaded spec from source")
+			util.MergeJSON(mergedData, jsonData)
+		}
+
+		// marshal merged data
+		bytes, err := json.MarshalIndent(mergedData, "", "  ")
+		if err != nil {
+			return fmt.Errorf("failed to marshal merged data: %w", err)
+		}
+
+		// write to file
+		err = os.WriteFile(specFile, bytes, 0644)
+		if err != nil {
+			return fmt.Errorf("failed to write merged data to file: %w", err)
+		}
 	}
 
 	// patch spec file

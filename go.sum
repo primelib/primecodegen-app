@@ -21,8 +21,8 @@ github.com/bwesterb/go-ristretto v1.2.0/go.mod h1:fUIoIZaG73pV5biE2Blr2xEzDoMj7N
 github.com/bwesterb/go-ristretto v1.2.3/go.mod h1:fUIoIZaG73pV5biE2Blr2xEzDoMj7NFEuV9ekS419A0=
 github.com/cidverse/go-vcs v0.0.0-20230828222442-5c163d63715f h1:DmDPxRJLg0WnyLpj+Gb6JbYJfwnONreBYaWrkIpduk0=
 github.com/cidverse/go-vcs v0.0.0-20230828222442-5c163d63715f/go.mod h1:i1+3OqlETNcnKgYN+3WslM+LLcXbX9u0W/e4wSVWiyA=
-github.com/cidverse/vcs-app v0.0.0-20230829232718-3384b0662984 h1:e+x3EhuddRFL1ce/klu8bW+h5Ut1iEIMtrcO5Svb1uQ=
-github.com/cidverse/vcs-app v0.0.0-20230829232718-3384b0662984/go.mod h1:72N5X2gbnYpJxMzzw1rKzNDUibs1/8d9zQi1/Bfnypc=
+github.com/cidverse/vcs-app v0.0.0-20230830204842-9573140fda69 h1:+Cp8b+2Q384BznGCquGQABIAhi6v6QOMcROIILOA9fY=
+github.com/cidverse/vcs-app v0.0.0-20230830204842-9573140fda69/go.mod h1:72N5X2gbnYpJxMzzw1rKzNDUibs1/8d9zQi1/Bfnypc=
 github.com/cloudflare/circl v1.1.0/go.mod h1:prBCrKB9DV4poKZY1l9zBXg2QJY7mvgRvtMxxK7fi4I=
 github.com/cloudflare/circl v1.3.3 h1:fE/Qz0QdIGqeWfnwq0RE0R7MI51s0M2E4Ga9kq5AEMs=
 github.com/cloudflare/circl v1.3.3/go.mod h1:5XYMA4rFBvNIrhs50XuiBJ15vF2pZn4nnUKZrLbUZFA=
