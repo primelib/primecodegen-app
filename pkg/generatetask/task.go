@@ -84,7 +84,7 @@ func (n PrimeLibGenerateTask) ExecuteModule(ctx taskcommon.TaskContext, module p
 	}
 
 	// generate
-	err = primelib.Execute(ctx.Directory, module)
+	err = primelib.Execute(ctx.Directory, module, ctx.Repository)
 	if err != nil {
 		return fmt.Errorf("failed to generate: %w", err)
 	}
@@ -99,12 +99,21 @@ func (n PrimeLibGenerateTask) ExecuteModule(ctx taskcommon.TaskContext, module p
 		commitMessage = fmt.Sprintf("feat: update openapi spec%s", commitSuffix)
 	}
 	description, err := vcsapp.Render(string(descriptionTemplate), map[string]interface{}{
-		"Module":      moduleName,
-		"SpecUpdated": slices.Contains(changes, module.SpecFile),
-		"CodeUpdated": len(changes) > 1,
+		"PlatformName": ctx.Platform.Name(),
+		"PlatformSlug": ctx.Platform.Slug(),
+		"Module":       moduleName,
+		"SpecUpdated":  slices.Contains(changes, module.SpecFile),
+		"CodeUpdated":  len(changes) > 1,
+		"Footer":       os.Getenv("PRIMEAPP_FOOTER_HIDE") != "true",
 	})
 	if err != nil {
 		return fmt.Errorf("failed to render description template: %w", err)
+	}
+
+	// do not commit if only .openapi-generator/FILES changed
+	if len(changes) == 1 && strings.HasSuffix(changes[0], ".openapi-generator/FILES") {
+		log.Info().Msg("no changes detected, skipping commit and merge request")
+		return nil
 	}
 
 	// commit push and create or update merge request

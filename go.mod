@@ -3,7 +3,7 @@ module github.com/primelib/primelib-app
 go 1.21
 
 require (
-	github.com/cidverse/vcs-app v0.0.0-20230830204842-9573140fda69
+	github.com/cidverse/vcs-app v0.0.0-20230831211417-958b58f6877b
 	github.com/mattn/go-colorable v0.1.13
 	github.com/rs/zerolog v1.30.0
 	github.com/spf13/cobra v1.7.0
@@ -52,7 +52,7 @@ require (
 	golang.org/x/oauth2 v0.11.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
-	golang.org/x/tools v0.12.1-0.20230829162925-5e8d21aa5354 // indirect
+	golang.org/x/tools v0.12.1-0.20230830221818-e3671fc6117f // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect

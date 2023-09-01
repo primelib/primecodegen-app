@@ -9,11 +9,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/cidverse/vcs-app/pkg/platform/api"
 	"github.com/primelib/primelib-app/pkg/util"
 	"github.com/rs/zerolog/log"
 )
 
-func Execute(dir string, module Module) error {
+func Execute(dir string, module Module, repository api.Repository) error {
 	specFile := filepath.Join(dir, module.Dir, module.SpecFile)
 	log.Debug().Str("module", module.Name).Str("spec_url", module.SpecURL).Str("spec-file", specFile).Msg("processing module")
 
@@ -75,7 +76,7 @@ func Execute(dir string, module Module) error {
 	}
 
 	// regenerate code
-	err = generateCode(specFile, filepath.Join(dir, module.Dir))
+	err = generateCode(specFile, filepath.Join(dir, module.Dir), module.Config, repository)
 	if err != nil {
 		return fmt.Errorf("failed to generate code: %w", err)
 	}
@@ -142,7 +143,53 @@ func deleteGeneratedFiles(moduleDirectory string) error {
 	return nil
 }
 
-func generateCode(specFile string, moduleDirectory string) error {
+func generateCode(specFile string, moduleDirectory string, config GeneratorConfig, repository api.Repository) error {
+	// auto generate config
+	tempConfigFile, tmpErr := os.CreateTemp("", "openapi-generator.json")
+	if tmpErr != nil {
+		return fmt.Errorf("failed to create temp file: %w", tmpErr)
+	}
+	defer tempConfigFile.Close()
+
+	// config
+	configFile := path.Join(moduleDirectory, "openapi-generator.json")
+	if _, err := os.Stat(configFile); os.IsNotExist(err) {
+		// set defaults and missing properties
+		config.EnablePostProcessFile = true
+		if _, ok := config.AdditionalProperties["projectName"]; !ok {
+			config.AdditionalProperties["projectName"] = repository.Name
+		}
+		if _, ok := config.AdditionalProperties["projectDescription"]; !ok {
+			config.AdditionalProperties["projectDescription"] = repository.Description
+		}
+		if _, ok := config.AdditionalProperties["projectRepository"]; !ok {
+			config.AdditionalProperties["projectRepository"] = repository.URL
+		}
+		if _, ok := config.AdditionalProperties["projectInceptionYear"]; !ok {
+			config.AdditionalProperties["projectInceptionYear"] = repository.CreatedAt.Year()
+		}
+		if _, ok := config.AdditionalProperties["projectLicenseName"]; !ok {
+			config.AdditionalProperties["projectLicenseName"] = repository.LicenseName
+		}
+		if _, ok := config.AdditionalProperties["projectLicenseUrl"]; !ok {
+			config.AdditionalProperties["projectLicenseUrl"] = repository.LicenseURL
+		}
+
+		// marshal config
+		bytes, err := json.MarshalIndent(config, "", "  ")
+		if err != nil {
+			return fmt.Errorf("failed to marshal config: %w", err)
+		}
+
+		// write to temp file
+		err = os.WriteFile(tempConfigFile.Name(), bytes, 0644)
+		if err != nil {
+			return fmt.Errorf("failed to write config: %w", err)
+		}
+
+		configFile = tempConfigFile.Name()
+	}
+
 	// generate code
 	args := []string{
 		"primecodegen",
@@ -150,7 +197,7 @@ func generateCode(specFile string, moduleDirectory string) error {
 		"-e", "auto",
 		"-i", specFile,
 		"-o", moduleDirectory,
-		"-c", path.Join(moduleDirectory, "openapi-generator.json"),
+		"-c", configFile,
 		"--openapi-normalizer", "SIMPLIFY_ONEOF_ANYOF=true",
 		"--openapi-normalizer", "SIMPLIFY_BOOLEAN_ENUM=true",
 		"--openapi-normalizer", "REMOVE_ANYOF_ONEOF_AND_KEEP_PROPERTIES_ONLY=true",

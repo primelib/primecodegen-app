@@ -21,8 +21,8 @@ github.com/bwesterb/go-ristretto v1.2.0/go.mod h1:fUIoIZaG73pV5biE2Blr2xEzDoMj7N
 github.com/bwesterb/go-ristretto v1.2.3/go.mod h1:fUIoIZaG73pV5biE2Blr2xEzDoMj7NFEuV9ekS419A0=
 github.com/cidverse/go-vcs v0.0.0-20230828222442-5c163d63715f h1:DmDPxRJLg0WnyLpj+Gb6JbYJfwnONreBYaWrkIpduk0=
 github.com/cidverse/go-vcs v0.0.0-20230828222442-5c163d63715f/go.mod h1:i1+3OqlETNcnKgYN+3WslM+LLcXbX9u0W/e4wSVWiyA=
-github.com/cidverse/vcs-app v0.0.0-20230830204842-9573140fda69 h1:+Cp8b+2Q384BznGCquGQABIAhi6v6QOMcROIILOA9fY=
-github.com/cidverse/vcs-app v0.0.0-20230830204842-9573140fda69/go.mod h1:72N5X2gbnYpJxMzzw1rKzNDUibs1/8d9zQi1/Bfnypc=
+github.com/cidverse/vcs-app v0.0.0-20230831211417-958b58f6877b h1:noqNhsPQlco5XzgVEO+472txlmlH5LwXNBOiOFg6TNU=
+github.com/cidverse/vcs-app v0.0.0-20230831211417-958b58f6877b/go.mod h1:72N5X2gbnYpJxMzzw1rKzNDUibs1/8d9zQi1/Bfnypc=
 github.com/cloudflare/circl v1.1.0/go.mod h1:prBCrKB9DV4poKZY1l9zBXg2QJY7mvgRvtMxxK7fi4I=
 github.com/cloudflare/circl v1.3.3 h1:fE/Qz0QdIGqeWfnwq0RE0R7MI51s0M2E4Ga9kq5AEMs=
 github.com/cloudflare/circl v1.3.3/go.mod h1:5XYMA4rFBvNIrhs50XuiBJ15vF2pZn4nnUKZrLbUZFA=
@@ -207,8 +207,8 @@ golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGm
 golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
 golang.org/x/tools v0.1.12/go.mod h1:hNGJHUnrk76NpqgfD5Aqm5Crs+Hm0VOH/i9J2+nxYbc=
 golang.org/x/tools v0.6.0/go.mod h1:Xwgl3UAJ/d3gWutnCtw505GrjyAbvKui8lOU390QaIU=
-golang.org/x/tools v0.12.1-0.20230829162925-5e8d21aa5354 h1:kZ9Kbmn7AqeX5s6F91ILQ88yx1ftfzq2jWRnBi8480Y=
-golang.org/x/tools v0.12.1-0.20230829162925-5e8d21aa5354/go.mod h1:Sc0INKfu04TlqNoRA1hgpFZbhYXHPr4V5DzpSBTPqQM=
+golang.org/x/tools v0.12.1-0.20230830221818-e3671fc6117f h1:F/cclwK/lF1fcKimvDqll9jv6ohD8CkqjUnKMnHx2sc=
+golang.org/x/tools v0.12.1-0.20230830221818-e3671fc6117f/go.mod h1:Sc0INKfu04TlqNoRA1hgpFZbhYXHPr4V5DzpSBTPqQM=
 golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 google.golang.org/appengine v1.6.7 h1:FZR1q0exgwxzPzp/aF+VccGrSfxfPpkBqjIIEq3ru6c=

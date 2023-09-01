@@ -24,11 +24,23 @@ type Module struct {
 	SpecScript string `yaml:"spec_script"`
 	// GenerateScript is the relative path to the script that generates the code
 	SpecSources []SpecSource `yaml:"spec_sources"`
+	// Config is the openapi generator config
+	Config GeneratorConfig `yaml:"config"`
 }
 
 type SpecSource struct {
 	Name string `yaml:"name" required:"true"`
 	URL  string `yaml:"url" required:"true"`
+}
+
+type GeneratorConfig struct {
+	GeneratorName         string                 `json:"generatorName" yaml:"generatorName"`
+	InvokerPackage        string                 `json:"invokerPackage" yaml:"invokerPackage"`
+	ApiPackage            string                 `json:"apiPackage" yaml:"apiPackage"`
+	ModelPackage          string                 `json:"modelPackage" yaml:"modelPackage"`
+	EnablePostProcessFile bool                   `json:"enablePostProcessFile" yaml:"enablePostProcessFile"`
+	GlobalProperty        map[string]interface{} `json:"globalProperty" yaml:"globalProperty"`
+	AdditionalProperties  map[string]interface{} `json:"additionalProperties" yaml:"additionalProperties"`
 }
 
 func LoadProjectConfig(file string) (*Configuration, error) {
