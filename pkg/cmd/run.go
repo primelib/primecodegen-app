@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/cidverse/vcs-app/pkg/task/taskcommon"
-	"github.com/cidverse/vcs-app/pkg/vcsapp"
+	"github.com/cidverse/go-vcsapp/pkg/task/taskcommon"
+	"github.com/cidverse/go-vcsapp/pkg/vcsapp"
 	"github.com/primelib/primelib-app/pkg/generatetask"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"

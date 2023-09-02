@@ -7,9 +7,9 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/cidverse/vcs-app/pkg/task/simpletask"
-	"github.com/cidverse/vcs-app/pkg/task/taskcommon"
-	"github.com/cidverse/vcs-app/pkg/vcsapp"
+	"github.com/cidverse/go-vcsapp/pkg/task/simpletask"
+	"github.com/cidverse/go-vcsapp/pkg/task/taskcommon"
+	"github.com/cidverse/go-vcsapp/pkg/vcsapp"
 	"github.com/primelib/primelib-app/pkg/primelib"
 	"github.com/rs/zerolog/log"
 )

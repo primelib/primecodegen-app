@@ -3,7 +3,7 @@ module github.com/primelib/primelib-app
 go 1.21
 
 require (
-	github.com/cidverse/vcs-app v0.0.0-20230831211417-958b58f6877b
+	github.com/cidverse/go-vcsapp v0.0.0-20230902194113-4cebb2ccccfb
 	github.com/mattn/go-colorable v0.1.13
 	github.com/rs/zerolog v1.30.0
 	github.com/spf13/cobra v1.7.0
@@ -44,13 +44,13 @@ require (
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/skeema/knownhosts v1.2.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/xanzy/go-gitlab v0.90.0 // indirect
+	github.com/xanzy/go-gitlab v0.91.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	golang.org/x/crypto v0.12.0 // indirect
 	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/net v0.14.0 // indirect
 	golang.org/x/oauth2 v0.11.0 // indirect
-	golang.org/x/sys v0.11.0 // indirect
+	golang.org/x/sys v0.12.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.12.1-0.20230830221818-e3671fc6117f // indirect
 	google.golang.org/appengine v1.6.7 // indirect
