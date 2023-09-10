@@ -4,13 +4,17 @@ import (
 	_ "embed"
 	"fmt"
 	"os"
+	"path"
+	"path/filepath"
 	"slices"
 	"strings"
 
 	"github.com/cidverse/go-vcsapp/pkg/task/simpletask"
 	"github.com/cidverse/go-vcsapp/pkg/task/taskcommon"
 	"github.com/cidverse/go-vcsapp/pkg/vcsapp"
+	cp "github.com/otiai10/copy"
 	"github.com/primelib/primelib-app/pkg/primelib"
+	"github.com/primelib/primelib-app/pkg/spec"
 	"github.com/rs/zerolog/log"
 )
 
@@ -83,10 +87,28 @@ func (n PrimeLibGenerateTask) ExecuteModule(ctx taskcommon.TaskContext, module p
 		return fmt.Errorf("failed to create branch: %w", err)
 	}
 
+	// store original spec file
+	originalSpecFile, err := os.CreateTemp("", "primelib-openapi-*"+filepath.Ext(module.SpecFile))
+	if err != nil {
+		return fmt.Errorf("failed to create temp file: %w", err)
+	}
+	err = cp.Copy(path.Join(ctx.Directory, module.Dir, module.SpecFile), originalSpecFile.Name())
+	defer os.Remove(originalSpecFile.Name())
+	if err != nil {
+		os.Remove(originalSpecFile.Name())
+	}
+
 	// generate
 	err = primelib.Execute(ctx.Directory, module, ctx.Repository)
 	if err != nil {
 		return fmt.Errorf("failed to generate: %w", err)
+	}
+
+	// store updated spec file
+	updatedSpecFile := path.Join(ctx.Directory, module.Dir, module.SpecFile)
+	diff, err := spec.DiffSpec(module.SpecFormat, originalSpecFile.Name(), updatedSpecFile)
+	if err != nil {
+		log.Warn().Err(err).Msg("failed to diff spec file")
 	}
 
 	// commit message and description
@@ -102,8 +124,9 @@ func (n PrimeLibGenerateTask) ExecuteModule(ctx taskcommon.TaskContext, module p
 		"PlatformName": ctx.Platform.Name(),
 		"PlatformSlug": ctx.Platform.Slug(),
 		"Module":       moduleName,
-		"SpecUpdated":  slices.Contains(changes, module.SpecFile),
+		"SpecUpdated":  slices.Contains(changes, path.Join(module.Dir, module.SpecFile)),
 		"CodeUpdated":  len(changes) > 1,
+		"SpecDiff":     diff,
 		"Footer":       os.Getenv("PRIMEAPP_FOOTER_HIDE") != "true",
 	})
 	if err != nil {

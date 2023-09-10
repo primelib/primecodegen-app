@@ -20,6 +20,8 @@ type Module struct {
 	SpecURL string `yaml:"spec_url"`
 	// SpecFile is the relative path to the openapi spec
 	SpecFile string `yaml:"spec_file" required:"true"`
+	// SpecFormat is the format of the openapi spec
+	SpecFormat string `yaml:"spec_format"`
 	// SpecScript accepts a script that can be used to fix issues in the openapi spec
 	SpecScript string `yaml:"spec_script"`
 	// GenerateScript is the relative path to the script that generates the code

@@ -7,6 +7,13 @@
 * updated generated code{{ if .Module }} for module {{ .Module }}{{ end }}
 {{- end }}
 
+{{- if and .SpecDiff.OpenAPI (lt (len .SpecDiff.OpenAPI) 15) }}
+### OpenAPI Diff
+{{- range $change := .SpecDiff.OpenAPI }}
+* [{{ if eq $change.Level 3 }}major{{ end }}{{ if eq $change.Level 2 }}minor{{ end }}{{ if eq $change.Level 1 }}patch{{ end }}] {{ $change.Operation }} {{ $change.Path }}: {{ $change.Text }}
+{{- end }}
+{{- end }}
+
 ---
 
 ### Configuration
