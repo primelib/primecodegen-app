@@ -8,6 +8,7 @@ import (
 )
 
 type Configuration struct {
+	Release bool     `yaml:"release"`
 	Modules []Module `yaml:"modules"`
 }
 

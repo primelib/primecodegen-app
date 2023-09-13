@@ -3,7 +3,8 @@ module github.com/primelib/primelib-app
 go 1.21
 
 require (
-	github.com/cidverse/go-vcsapp v0.0.0-20230902194113-4cebb2ccccfb
+	github.com/Masterminds/semver/v3 v3.2.1
+	github.com/cidverse/go-vcsapp v0.0.0-20230913193925-e9063dc939ad
 	github.com/mattn/go-colorable v0.1.13
 	github.com/otiai10/copy v1.12.0
 	github.com/rs/zerolog v1.30.0
@@ -14,7 +15,6 @@ require (
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
-	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230828082145-3c4c8a2d2371 // indirect
 	github.com/acomagu/bufpipe v1.0.4 // indirect

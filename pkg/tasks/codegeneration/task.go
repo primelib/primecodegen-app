@@ -1,4 +1,4 @@
-package generatetask
+package codegeneration
 
 import (
 	_ "embed"
@@ -28,7 +28,7 @@ type PrimeLibGenerateTask struct {
 
 // Name returns the name of the task
 func (n PrimeLibGenerateTask) Name() string {
-	return "primelib-generate"
+	return "generate"
 }
 
 // Execute runs the task

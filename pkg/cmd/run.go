@@ -1,9 +1,13 @@
 package cmd
 
 import (
+	"os"
+	"slices"
+
 	"github.com/cidverse/go-vcsapp/pkg/task/taskcommon"
 	"github.com/cidverse/go-vcsapp/pkg/vcsapp"
-	"github.com/primelib/primelib-app/pkg/generatetask"
+	"github.com/primelib/primelib-app/pkg/tasks/codegeneration"
+	"github.com/primelib/primelib-app/pkg/tasks/createtag"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -17,8 +21,17 @@ var runCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Run: func(cmd *cobra.Command, args []string) {
 		// tasks
-		var tasks = []taskcommon.Task{
-			generatetask.NewTask(),
+		var tasks []taskcommon.Task
+		if slices.Contains(args, "generate") {
+			tasks = append(tasks, codegeneration.NewTask())
+		}
+		if slices.Contains(args, "release") {
+			tasks = append(tasks, createtag.NewTask())
+		}
+
+		if len(tasks) == 0 {
+			log.Fatal().Msg("no tasks specified, supported tasks are: generate, release")
+			os.Exit(1)
 		}
 
 		// platform
