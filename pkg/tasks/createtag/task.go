@@ -10,6 +10,7 @@ import (
 	"github.com/cidverse/go-vcsapp/pkg/task/taskcommon"
 	"github.com/primelib/primelib-app/pkg/primelib"
 	"github.com/primelib/primelib-app/pkg/spec"
+	"github.com/primelib/primelib-app/pkg/util"
 	"github.com/rs/zerolog/log"
 )
 
@@ -34,17 +35,16 @@ func (n PrimeLibTagCreateTask) Execute(ctx taskcommon.TaskContext) error {
 		return fmt.Errorf("failed to load primelib.yaml: %w", err)
 	}
 
+	// requires modules
+	if len(config.Modules) == 0 {
+		return fmt.Errorf("no modules found")
+	}
+
 	// skip if auto release is disabled
 	if !config.Release {
 		log.Debug().Str("repo", ctx.Repository.Namespace+"/"+ctx.Repository.Name).Msg("release creation is disabled, skipping")
 		return nil
 	}
-
-	// skip if there are multiple modules
-	if len(config.Modules) > 1 {
-		return fmt.Errorf("auto tagging is only supported for single-module projects")
-	}
-	module := config.Modules[0]
 
 	// check if last tag has a release
 	tagList, err := ctx.Platform.Tags(ctx.Repository, 5)
@@ -68,46 +68,53 @@ func (n PrimeLibTagCreateTask) Execute(ctx taskcommon.TaskContext) error {
 	log.Debug().Interface("tag", lastRelease).Msg("found last tag")
 
 	// get next version
-	nextVersion := "0.1.0"
+	nextVersion := []string{"0.1.0"}
 	if lastRelease != nil {
-		// get old version of spec file
-		oldFile, err := os.CreateTemp("", "primelib-spec")
-		if err != nil {
-			return fmt.Errorf("failed to create temp file: %w", err)
-		}
-		oldContent, err := ctx.Platform.FileContent(ctx.Repository, lastRelease.CommitHash, path.Join(module.Dir, module.SpecFile))
-		if err != nil {
-			return fmt.Errorf("failed to get spec file content: %w", err)
-		}
-		_, err = oldFile.WriteString(oldContent)
-		if err != nil {
-			return fmt.Errorf("failed to write to temp file: %w", err)
-		}
+		for _, module := range config.Modules {
+			// get old version of spec file
+			oldFile, err := os.CreateTemp("", "primelib-spec")
+			if err != nil {
+				return fmt.Errorf("failed to create temp file: %w", err)
+			}
+			oldContent, err := ctx.Platform.FileContent(ctx.Repository, lastRelease.CommitHash, path.Join(module.Dir, module.SpecFile))
+			if err != nil {
+				return fmt.Errorf("failed to get spec file content: %w", err)
+			}
+			_, err = oldFile.WriteString(oldContent)
+			if err != nil {
+				return fmt.Errorf("failed to write to temp file: %w", err)
+			}
 
-		// get new version of spec file
-		newFile, err := os.CreateTemp("", "primelib-spec")
-		if err != nil {
-			return fmt.Errorf("failed to create temp file: %w", err)
-		}
-		currentContent, err := ctx.Platform.FileContent(ctx.Repository, lastRelease.CommitHash, path.Join(module.Dir, module.SpecFile))
-		if err != nil {
-			return fmt.Errorf("failed to get spec file content: %w", err)
-		}
-		_, err = newFile.WriteString(currentContent)
+			// get new version of spec file
+			newFile, err := os.CreateTemp("", "primelib-spec")
+			if err != nil {
+				return fmt.Errorf("failed to create temp file: %w", err)
+			}
+			currentContent, err := ctx.Platform.FileContent(ctx.Repository, lastRelease.CommitHash, path.Join(module.Dir, module.SpecFile))
+			if err != nil {
+				return fmt.Errorf("failed to get spec file content: %w", err)
+			}
+			_, err = newFile.WriteString(currentContent)
 
-		// determinate the next version number
-		nextVersion, err = spec.BumpVersion(module.SpecFormat, oldFile.Name(), newFile.Name(), lastRelease.Name)
-		if err != nil {
-			return fmt.Errorf("failed to bump version: %w", err)
+			// determinate the next version number
+			version, err := spec.BumpVersion(module.SpecFormat, oldFile.Name(), newFile.Name(), lastRelease.Name)
+			if err != nil {
+				return fmt.Errorf("failed to bump version: %w", err)
+			}
+
+			nextVersion = append(nextVersion, version)
 		}
 	}
 
+	// find highest version
+	version := util.FindHighestVersion(nextVersion)
+
 	// create tag
-	err = ctx.Platform.CreateTag(ctx.Repository, "v"+nextVersion, ctx.Repository.CommitHash, "")
+	err = ctx.Platform.CreateTag(ctx.Repository, "v"+version, ctx.Repository.CommitHash, "")
 	if err != nil {
 		return fmt.Errorf("failed to create tag: %w", err)
 	}
-	log.Info().Str("repository", ctx.Repository.Namespace+"/"+ctx.Repository.Name).Str("tag", "v"+nextVersion).Msg("created tag")
+	log.Info().Str("repository", ctx.Repository.Namespace+"/"+ctx.Repository.Name).Str("tag", "v"+version).Msg("created tag")
 
 	return nil
 }
