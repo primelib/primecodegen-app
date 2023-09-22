@@ -110,7 +110,9 @@ func (n PrimeLibGenerateTask) ExecuteModule(ctx taskcommon.TaskContext, module p
 	if err != nil {
 		log.Warn().Err(err).Msg("failed to diff spec file")
 	}
-	diff.OpenAPI = diff.OpenAPI[:30] // limit to the first 30 changes, sorted by level
+	if len(diff.OpenAPI) > 20 {
+		diff.OpenAPI = diff.OpenAPI[:20] // limit to the first n changes, sorted by level
+	}
 
 	// commit message and description
 	changes, err := helper.VCSClient.UncommittedChanges()
