@@ -24,10 +24,11 @@
 {{ if .Footer }}
 ---
 
-{{- if eq .PlatformSlug "github" }}
+{{- if .FooterCustom }}
+{{ .FooterCustom }}
+{{- else if eq .PlatformSlug "github" }}
 This PR has been generated automatically by the [PrimeLib GitHub App](https://github.com/apps/primelib-generator).
-{{- end }}
-{{- if eq .PlatformSlug "gitlab" }}
+{{- else if eq .PlatformSlug "gitlab" }}
 This MR has been generated automatically by the PrimeLib GitLab App.
 {{- end }}
 {{- end }}

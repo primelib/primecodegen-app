@@ -4,21 +4,20 @@ Application to automatically update openapi specs and the generated client libra
 
 ## Usage
 
-```bash
-primelib-app run
-```
+| Commands                    | Description                                                                                        |
+|-----------------------------|----------------------------------------------------------------------------------------------------|
+| `primelib-app run generate` | Creates a PR with updates to the OpenAPI Spec and the generated code.                              |
+| `primelib-app run release`  | Checks if the latest commit in the main branch has a release, automatically creating a tag if not. |
 
-## Configuration
+## Project Configuration
 
 Projects are configured using a `primelib.yaml` file in the root of the repository.
 
-**Java**
+**Example - Java**
 
 ```yaml
 modules:
-  - name: osv-rest # module name
-    dir: . # relative to repository root
-    spec_file: openapi.json # local spec file
+  - spec_file: openapi.json # local spec file
     spec_url: https://osv.dev/docs/osv_service_v1.swagger.json # update spec from url
     spec_script: | # patch openapi spec before generation
       jq '.host = "api.osv.dev"' "$1" | sponge "$1" # set api host
@@ -33,6 +32,13 @@ modules:
         projectArtifactGroupId: io.github.primelib
         projectArtifactId: osv4j
 ```
+
+## App Configuration
+
+| Environment Variable     | Description                                                              |
+|--------------------------|--------------------------------------------------------------------------|
+| `PRIMEAPP_FOOTER_HIDE`   | Set to true to disable the footer note in the merge request description. |
+| `PRIMEAPP_FOOTER_CUSTOM` | Set to replace the footer with your custom text.                         |
 
 ## Platform Configuration
 

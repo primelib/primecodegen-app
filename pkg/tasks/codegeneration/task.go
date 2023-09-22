@@ -131,6 +131,7 @@ func (n PrimeLibGenerateTask) ExecuteModule(ctx taskcommon.TaskContext, module p
 		"CodeUpdated":  len(changes) > 1,
 		"SpecDiff":     diff,
 		"Footer":       os.Getenv("PRIMEAPP_FOOTER_HIDE") != "true",
+		"FooterCustom": os.Getenv("PRIMEAPP_FOOTER_CUSTOM"),
 	})
 	if err != nil {
 		return fmt.Errorf("failed to render description template: %w", err)
