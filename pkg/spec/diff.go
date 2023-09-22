@@ -3,6 +3,7 @@ package spec
 import (
 	"fmt"
 	"os"
+	"sort"
 
 	"github.com/Masterminds/semver/v3"
 )
@@ -28,6 +29,12 @@ func DiffSpec(format string, file1 string, file2 string) (Diff, error) {
 		if err != nil {
 			return diff, fmt.Errorf("failed to diff openapi: %w", err)
 		}
+
+		// sort by level
+		sort.Slice(d, func(i, j int) bool {
+			return d[i].Level > d[j].Level
+		})
+
 		diff.OpenAPI = d
 	}
 
