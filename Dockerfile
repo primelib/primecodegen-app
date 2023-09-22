@@ -12,7 +12,7 @@ RUN apt-get update && \
 FROM quay.io/cidverse/build-go:1.21.0 AS builder
 
 RUN pkg-install-rootfs jq grep && \
-    curl -o /tmp/oasdiff.tar.gz -L https://github.com/Tufin/oasdiff/releases/download/v1.7.9/oasdiff_1.7.9_linux_amd64.tar.gz && \
+    curl -o /tmp/oasdiff.tar.gz -L https://github.com/Tufin/oasdiff/releases/download/v1.8.0/oasdiff_1.8.0_linux_amd64.tar.gz && \
     tar -xvf /tmp/oasdiff.tar.gz -C /tmp && \
     mkdir -p /rootfs/usr/local/bin && \
     mv /tmp/oasdiff /rootfs/usr/local/bin/oasdiff && \
