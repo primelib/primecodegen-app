@@ -13,7 +13,9 @@ type Diff struct {
 }
 
 func DiffSpec(format string, file1 string, file2 string) (Diff, error) {
-	var diff Diff
+	var diff = Diff{
+		OpenAPI: []OpenAPIDiff{},
+	}
 
 	// check of files exist
 	if _, err := os.Stat(file1); os.IsNotExist(err) {
