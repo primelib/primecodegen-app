@@ -23,8 +23,7 @@ const branchName = "feat/primelib-generate"
 //go:embed templates/description.gohtml
 var descriptionTemplate []byte
 
-type PrimeLibGenerateTask struct {
-}
+type PrimeLibGenerateTask struct{}
 
 // Name returns the name of the task
 func (n PrimeLibGenerateTask) Name() string {
@@ -119,6 +118,7 @@ func (n PrimeLibGenerateTask) ExecuteModule(ctx taskcommon.TaskContext, module p
 	if err != nil {
 		return fmt.Errorf("failed to get uncommitted changes: %w", err)
 	}
+	filteredChanges := filterChanges(changes)
 	commitMessage := fmt.Sprintf("feat: update generated code%s", commitSuffix)
 	if slices.Contains(changes, module.SpecFile) {
 		commitMessage = fmt.Sprintf("feat: update openapi spec%s", commitSuffix)
@@ -128,7 +128,7 @@ func (n PrimeLibGenerateTask) ExecuteModule(ctx taskcommon.TaskContext, module p
 		"PlatformSlug": ctx.Platform.Slug(),
 		"Module":       moduleName,
 		"SpecUpdated":  slices.Contains(changes, path.Join(module.Dir, module.SpecFile)),
-		"CodeUpdated":  len(changes) > 1,
+		"CodeUpdated":  len(filteredChanges) > 1,
 		"SpecDiff":     diff,
 		"Footer":       os.Getenv("PRIMEAPP_FOOTER_HIDE") != "true",
 		"FooterCustom": os.Getenv("PRIMEAPP_FOOTER_CUSTOM"),
@@ -138,8 +138,8 @@ func (n PrimeLibGenerateTask) ExecuteModule(ctx taskcommon.TaskContext, module p
 	}
 
 	// do not commit if only .openapi-generator/FILES changed
-	if len(changes) == 1 && strings.HasSuffix(changes[0], ".openapi-generator/FILES") {
-		log.Info().Msg("no changes detected, skipping commit and merge request")
+	if len(filteredChanges) == 0 {
+		log.Info().Int("total-changes", len(changes)).Int("actual-changes", len(filteredChanges)).Msg("no changes detected, skipping commit and merge request")
 		return nil
 	}
 
@@ -150,6 +150,21 @@ func (n PrimeLibGenerateTask) ExecuteModule(ctx taskcommon.TaskContext, module p
 	}
 
 	return nil
+}
+
+func filterChanges(changes []string) []string {
+	var filtered []string
+
+	for _, change := range changes {
+		// .openapi-generator/FILES is a file that is always changed, so we can ignore it
+		if strings.HasSuffix(change, ".openapi-generator/FILES") {
+			continue
+		}
+
+		filtered = append(filtered, change)
+	}
+
+	return filtered
 }
 
 func NewTask() PrimeLibGenerateTask {

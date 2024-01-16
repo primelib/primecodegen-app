@@ -15,6 +15,7 @@ import (
 )
 
 func Execute(dir string, module Module, repository api.Repository) error {
+	projectDir := filepath.Join(dir, module.Dir)
 	specFile := filepath.Join(dir, module.Dir, module.SpecFile)
 	log.Debug().Str("module", module.Name).Str("spec_url", module.SpecURL).Str("spec-file", specFile).Msg("processing module")
 
@@ -62,7 +63,7 @@ func Execute(dir string, module Module, repository api.Repository) error {
 
 	// patch spec file
 	if module.SpecScript != "" {
-		err := patchSpecFile(filepath.Join(dir, module.Dir, module.SpecFile), module.SpecScript)
+		err := patchSpecFile(specFile, module.SpecScript)
 		if err != nil {
 			return fmt.Errorf("failed to patch spec file: %w", err)
 		}
@@ -70,13 +71,13 @@ func Execute(dir string, module Module, repository api.Repository) error {
 	}
 
 	// delete generated files
-	err := deleteGeneratedFiles(filepath.Join(dir, module.Dir))
+	err := deleteGeneratedFiles(projectDir)
 	if err != nil {
 		return fmt.Errorf("failed to delete generated files: %w", err)
 	}
 
 	// regenerate code
-	err = generateCode(specFile, filepath.Join(dir, module.Dir), module.Config, repository)
+	err = generateCode(specFile, projectDir, module.Config, repository)
 	if err != nil {
 		return fmt.Errorf("failed to generate code: %w", err)
 	}
@@ -133,6 +134,12 @@ func deleteGeneratedFiles(moduleDirectory string) error {
 			continue
 		}
 
+		// skip if file does not exist
+		if _, err := os.Stat(filepath.Join(moduleDirectory, file)); os.IsNotExist(err) {
+			continue
+		}
+
+		// delete file
 		log.Trace().Str("path", filepath.Join(moduleDirectory, file)).Msg("deleting file")
 		err = os.Remove(filepath.Join(moduleDirectory, file))
 		if err != nil {
@@ -166,7 +173,9 @@ func generateCode(specFile string, moduleDirectory string, config GeneratorConfi
 			config.AdditionalProperties["projectRepository"] = repository.URL
 		}
 		if _, ok := config.AdditionalProperties["projectInceptionYear"]; !ok {
-			config.AdditionalProperties["projectInceptionYear"] = repository.CreatedAt.Year()
+			if repository.CreatedAt != nil {
+				config.AdditionalProperties["projectInceptionYear"] = repository.CreatedAt.Year()
+			}
 		}
 		if _, ok := config.AdditionalProperties["projectLicenseName"]; !ok {
 			config.AdditionalProperties["projectLicenseName"] = repository.LicenseName
@@ -190,22 +199,27 @@ func generateCode(specFile string, moduleDirectory string, config GeneratorConfi
 		configFile = tempConfigFile.Name()
 	}
 
-	// generate code
+	// primecodegen bin and args
+	executable := []string{"primecodegen"}
+	if binPath := os.Getenv("PRIMECODEGEN_BIN"); binPath != "" {
+		executable = strings.Fields(binPath)
+	}
 	args := []string{
-		"primecodegen",
 		"generate",
 		"-e", "auto",
 		"-i", specFile,
 		"-o", moduleDirectory,
 		"-c", configFile,
-		"--openapi-normalizer", "SIMPLIFY_ONEOF_ANYOF=true",
+		"--openapi-normalizer", "SIMPLIFY_ANYOF_STRING_AND_ENUM_STRING=true",
 		"--openapi-normalizer", "SIMPLIFY_BOOLEAN_ENUM=true",
-		"--openapi-normalizer", "REMOVE_ANYOF_ONEOF_AND_KEEP_PROPERTIES_ONLY=true",
+		"--openapi-normalizer", "SIMPLIFY_ONEOF_ANYOF=true",
+		"--openapi-normalizer", "ADD_UNSIGNED_TO_INTEGER_WITH_INVALID_MAX_VALUE=true",
 		"--openapi-normalizer", "REFACTOR_ALLOF_WITH_PROPERTIES_ONLY=true",
 		"--skip-validate-spec",
 	}
+	command := append(executable, args...)
 
-	cmd := exec.Command("bash", args...)
+	cmd := exec.Command("bash", command...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
