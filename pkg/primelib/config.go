@@ -29,6 +29,8 @@ type Module struct {
 	SpecSources []SpecSource `yaml:"spec_sources"`
 	// Config is the openapi generator config
 	Config GeneratorConfig `yaml:"config"`
+	// GeneratorArgs are custom arguments that are passed to the generator
+	GeneratorArgs GeneratorArgs `yaml:"generator_args"`
 }
 
 type SpecSource struct {
@@ -44,6 +46,11 @@ type GeneratorConfig struct {
 	EnablePostProcessFile bool                   `json:"enablePostProcessFile" yaml:"enablePostProcessFile"`
 	GlobalProperty        map[string]interface{} `json:"globalProperty" yaml:"globalProperty"`
 	AdditionalProperties  map[string]interface{} `json:"additionalProperties" yaml:"additionalProperties"`
+}
+
+type GeneratorArgs struct {
+	// UserArgs are the arguments that are passed to the generator
+	OpenAPIGeneratorArgs []string `yaml:"openapi_generator"`
 }
 
 func LoadProjectConfig(file string) (*Configuration, error) {

@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/cidverse/go-vcsapp/pkg/platform/api"
@@ -77,7 +78,7 @@ func Execute(dir string, module Module, repository api.Repository) error {
 	}
 
 	// regenerate code
-	err = generateCode(specFile, projectDir, module.Config, repository)
+	err = generateCode(specFile, projectDir, module.Config, repository, module.GeneratorArgs)
 	if err != nil {
 		return fmt.Errorf("failed to generate code: %w", err)
 	}
@@ -150,7 +151,7 @@ func deleteGeneratedFiles(moduleDirectory string) error {
 	return nil
 }
 
-func generateCode(specFile string, moduleDirectory string, config GeneratorConfig, repository api.Repository) error {
+func generateCode(specFile string, moduleDirectory string, config GeneratorConfig, repository api.Repository, generatorArgs GeneratorArgs) error {
 	// auto generate config
 	tempConfigFile, tmpErr := os.CreateTemp("", "openapi-generator.json")
 	if tmpErr != nil {
@@ -199,6 +200,24 @@ func generateCode(specFile string, moduleDirectory string, config GeneratorConfi
 		configFile = tempConfigFile.Name()
 	}
 
+	// default user args
+	if len(generatorArgs.OpenAPIGeneratorArgs) == 0 {
+		generatorArgs.OpenAPIGeneratorArgs = []string{
+			"--openapi-normalizer", "SIMPLIFY_ANYOF_STRING_AND_ENUM_STRING=true",
+			"--openapi-normalizer", "SIMPLIFY_BOOLEAN_ENUM=true",
+			"--openapi-normalizer", "SIMPLIFY_ONEOF_ANYOF=true",
+			"--openapi-normalizer", "ADD_UNSIGNED_TO_INTEGER_WITH_INVALID_MAX_VALUE=true",
+			"--openapi-normalizer", "REFACTOR_ALLOF_WITH_PROPERTIES_ONLY=true",
+		}
+	}
+
+	// all user args must be present in the allow list
+	for _, arg := range generatorArgs.OpenAPIGeneratorArgs {
+		if !slices.Contains(openApiGeneratorArgumentAllowList, arg) {
+			return fmt.Errorf("openapi generator argument not allowed: %s", arg)
+		}
+	}
+
 	// primecodegen bin and args
 	executable := []string{"primecodegen"}
 	if binPath := os.Getenv("PRIMECODEGEN_BIN"); binPath != "" {
@@ -210,14 +229,10 @@ func generateCode(specFile string, moduleDirectory string, config GeneratorConfi
 		"-i", specFile,
 		"-o", moduleDirectory,
 		"-c", configFile,
-		"--openapi-normalizer", "SIMPLIFY_ANYOF_STRING_AND_ENUM_STRING=true",
-		"--openapi-normalizer", "SIMPLIFY_BOOLEAN_ENUM=true",
-		"--openapi-normalizer", "SIMPLIFY_ONEOF_ANYOF=true",
-		"--openapi-normalizer", "ADD_UNSIGNED_TO_INTEGER_WITH_INVALID_MAX_VALUE=true",
-		"--openapi-normalizer", "REFACTOR_ALLOF_WITH_PROPERTIES_ONLY=true",
 		"--skip-validate-spec",
 	}
 	command := append(executable, args...)
+	command = append(command, generatorArgs.OpenAPIGeneratorArgs...)
 
 	cmd := exec.Command("bash", command...)
 	cmd.Stdout = os.Stdout
