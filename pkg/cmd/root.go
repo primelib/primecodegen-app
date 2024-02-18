@@ -77,6 +77,7 @@ func rootCmd() *cobra.Command {
 	cmd.PersistentFlags().StringVar(&cfg.LogLevel, "log-level", "info", "log level - allowed: "+strings.Join(validLogLevels, ","))
 	cmd.PersistentFlags().StringVar(&cfg.LogFormat, "log-format", "color", "log format - allowed: "+strings.Join(validLogFormats, ","))
 	cmd.PersistentFlags().BoolVar(&cfg.LogCaller, "log-caller", false, "include caller in log functions")
+	cmd.AddCommand(updateCmd())
 	cmd.AddCommand(generateCmd())
 	cmd.AddCommand(releaseCmd())
 	cmd.AddCommand(versionCmd())

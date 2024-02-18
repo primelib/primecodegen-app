@@ -28,7 +28,7 @@ func TestMergeJSON(t *testing.T) {
 		err := json.Unmarshal([]byte(str), &jsonData)
 		assert.NoError(t, err)
 
-		MergeJSON(mergedData, jsonData)
+		MergeMaps(mergedData, jsonData)
 	}
 
 	// marshal merged data

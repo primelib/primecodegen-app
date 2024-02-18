@@ -1,0 +1,365 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/primelib/primelib-app/main/configschema/v1.json",
+  "$ref": "#/$defs/Configuration",
+  "$defs": {
+    "Configuration": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "repository": {
+          "$ref": "#/$defs/Repository"
+        },
+        "maintainers": {
+          "items": {
+            "$ref": "#/$defs/Maintainer"
+          },
+          "type": "array"
+        },
+        "generator": {
+          "$ref": "#/$defs/Generators"
+        },
+        "spec": {
+          "$ref": "#/$defs/Spec"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name",
+        "summary",
+        "description",
+        "repository",
+        "maintainers",
+        "generator",
+        "spec"
+      ]
+    },
+    "Customization": {
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "contact": {
+          "$ref": "#/$defs/CustomizationContact"
+        },
+        "license": {
+          "$ref": "#/$defs/CustomizationLicense"
+        },
+        "servers": {
+          "items": {
+            "$ref": "#/$defs/CustomizationServer"
+          },
+          "type": "array"
+        },
+        "pruneOperations": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pruneTags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pruneSchemas": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "title",
+        "summary",
+        "description",
+        "version",
+        "contact",
+        "license",
+        "servers",
+        "pruneOperations",
+        "pruneTags",
+        "pruneSchemas"
+      ]
+    },
+    "CustomizationContact": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name",
+        "url",
+        "email"
+      ]
+    },
+    "CustomizationLicense": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "identifier": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name",
+        "url",
+        "identifier"
+      ]
+    },
+    "CustomizationServer": {
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "url",
+        "description"
+      ]
+    },
+    "Generators": {
+      "properties": {
+        "golang": {
+          "$ref": "#/$defs/GolangLanguageOptions"
+        },
+        "java": {
+          "$ref": "#/$defs/JavaLanguageOptions"
+        },
+        "python": {
+          "$ref": "#/$defs/PythonLanguageOptions"
+        },
+        "typescript": {
+          "$ref": "#/$defs/TypescriptLanguageOptions"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "golang",
+        "java",
+        "python",
+        "typescript"
+      ]
+    },
+    "GolangLanguageOptions": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "ignoreFiles": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "enabled",
+        "ignoreFiles"
+      ]
+    },
+    "JavaLanguageOptions": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "ignoreFiles": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "groupId": {
+          "type": "string"
+        },
+        "artifactId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "enabled",
+        "ignoreFiles",
+        "groupId",
+        "artifactId"
+      ]
+    },
+    "Maintainer": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "email",
+        "url"
+      ]
+    },
+    "PythonLanguageOptions": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "ignoreFiles": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pypiPackageName": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "enabled",
+        "ignoreFiles",
+        "pypiPackageName"
+      ]
+    },
+    "Repository": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "inceptionYear": {
+          "type": "integer"
+        },
+        "licenseName": {
+          "type": "string"
+        },
+        "licenseURL": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name",
+        "description",
+        "url",
+        "inceptionYear",
+        "licenseName",
+        "licenseURL"
+      ]
+    },
+    "Spec": {
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "urls": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "format": {
+          "type": "string"
+        },
+        "customization": {
+          "$ref": "#/$defs/Customization"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "file",
+        "urls",
+        "format",
+        "customization"
+      ]
+    },
+    "TypescriptLanguageOptions": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "ignoreFiles": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "npmOrg": {
+          "type": "string"
+        },
+        "npmName": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "enabled",
+        "ignoreFiles",
+        "npmOrg",
+        "npmName"
+      ]
+    }
+  }
+}

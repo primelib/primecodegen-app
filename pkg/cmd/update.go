@@ -14,17 +14,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func generateCmd() *cobra.Command {
+func updateCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "generate",
-		Aliases: []string{"g"},
+		Use:     "update",
+		Aliases: []string{"u"},
 		Run: func(cmd *cobra.Command, args []string) {
 			dir, _ := cmd.Flags().GetString("dir")
 
 			if dir == "" {
-				generateApp()
+				updateTaskApp()
 			} else {
-				generateLocal(dir)
+				updateLocal(dir)
 			}
 		},
 	}
@@ -34,7 +34,7 @@ func generateCmd() *cobra.Command {
 	return cmd
 }
 
-func generateApp() {
+func updateTaskApp() {
 	// tasks
 	tasks := []taskcommon.Task{codegeneration.NewTask()}
 
@@ -51,22 +51,22 @@ func generateApp() {
 	}
 }
 
-func generateLocal(dir string) {
-	configPath := path.Join(dir, "primelib.yaml")
+func updateLocal(dir string) {
+	configPath := path.Join(dir, config.ConfigFileName)
 	bytes, err := os.ReadFile(configPath)
 	if err != nil {
 		log.Fatal().Err(err).Str("config-path", configPath).Msg("failed to read primelib.yaml")
 	}
 
 	// load config
-	conf, err := config.ConfigFromString(string(bytes))
+	config, err := config.ConfigFromString(string(bytes))
 	if err != nil {
 		log.Fatal().Err(err).Str("config-path", configPath).Msg("failed to parse primelib.yaml")
 	}
 
 	// for each module
 	log.Info().Str("dir", dir).Str("config", configPath).Msg("running local generation")
-	genErr := primelib.Generate(dir, conf, api.Repository{})
+	genErr := primelib.Update(dir, config, api.Repository{})
 	if genErr != nil {
 		log.Warn().Err(genErr).Msg("failed to generate code")
 	}

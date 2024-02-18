@@ -6,8 +6,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"slices"
-	"strings"
 
 	"github.com/cidverse/go-vcsapp/pkg/task/simpletask"
 	"github.com/cidverse/go-vcsapp/pkg/task/taskcommon"
@@ -19,38 +17,30 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const branchName = "feat/primelib-generate"
+const branchName = "feat/primelib-spec"
 
 //go:embed templates/description.gohtml
 var descriptionTemplate []byte
 
-type PrimeLibGenerateTask struct{}
+type SpecUpdateTask struct{}
 
 // Name returns the name of the task
-func (n PrimeLibGenerateTask) Name() string {
+func (n SpecUpdateTask) Name() string {
 	return "generate"
 }
 
 // Execute runs the task
-func (n PrimeLibGenerateTask) Execute(ctx taskcommon.TaskContext) error {
+func (n SpecUpdateTask) Execute(ctx taskcommon.TaskContext) error {
 	content, err := ctx.Platform.FileContent(ctx.Repository, ctx.Repository.DefaultBranch, config.ConfigFileName)
 	if err != nil {
-		return fmt.Errorf("failed to get primelib.yaml content: %w", err)
+		return fmt.Errorf("failed to get %s content: %w", config.ConfigFileName, err)
 	}
 
 	// load config
-	config, err := config.ConfigFromString(content)
+	conf, err := config.ConfigFromString(content)
 	if err != nil {
-		return fmt.Errorf("failed to load primelib.yaml: %w", err)
+		return fmt.Errorf("failed to load %s: %w", config.ConfigFileName, err)
 	}
-
-	// create temp directory (override, so we can run the modules individually)
-	tempDir, err := os.MkdirTemp("", "vcs-app-*")
-	if err != nil {
-		return fmt.Errorf("failed to prepare temp directory: %w", err)
-	}
-	defer os.RemoveAll(tempDir)
-	ctx.Directory = tempDir
 
 	// create helper
 	helper := simpletask.New(ctx)
@@ -61,32 +51,24 @@ func (n PrimeLibGenerateTask) Execute(ctx taskcommon.TaskContext) error {
 		return fmt.Errorf("failed to clone repository: %w", err)
 	}
 
-	branch := branchName
-	commitSuffix := ""
-
 	// create and checkout new branch
+	branch := branchName
 	err = helper.CreateBranch(branch)
 	if err != nil {
 		return fmt.Errorf("failed to create branch: %w", err)
 	}
 
 	// store original spec file
-	specFile := path.Join(ctx.Directory, config.Spec.File)
-	originalSpecFile, err := os.CreateTemp("", "primelib-openapi-*"+filepath.Ext(specFile))
+	specFile := path.Join(ctx.Directory, conf.Spec.File)
+	originalSpecFile, err := os.CreateTemp("", "primelib-openapi-*"+filepath.Ext(conf.Spec.File))
 	if err != nil {
 		return fmt.Errorf("failed to create temp file: %w", err)
 	}
-	_ = cp.Copy(specFile, originalSpecFile.Name())
+	err = cp.Copy(specFile, originalSpecFile.Name())
 	defer os.Remove(originalSpecFile.Name())
 
 	// update spec
-	err = primelib.Update(ctx.Directory, config, ctx.Repository)
-	if err != nil {
-		return fmt.Errorf("failed to update spec: %w", err)
-	}
-
-	// generate
-	err = primelib.Generate(ctx.Directory, config, ctx.Repository)
+	err = primelib.Update(ctx.Directory, conf, ctx.Repository)
 	if err != nil {
 		return fmt.Errorf("failed to generate: %w", err)
 	}
@@ -105,17 +87,11 @@ func (n PrimeLibGenerateTask) Execute(ctx taskcommon.TaskContext) error {
 	if err != nil {
 		return fmt.Errorf("failed to get uncommitted changes: %w", err)
 	}
-	filteredChanges := filterChanges(changes)
-	commitMessage := fmt.Sprintf("feat: update generated code%s", commitSuffix)
-	if slices.Contains(changes, specFile) {
-		commitMessage = fmt.Sprintf("feat: update openapi spec%s", commitSuffix)
-	}
+	commitMessage := "feat: update openapi spec"
 	description, err := vcsapp.Render(string(descriptionTemplate), map[string]interface{}{
 		"PlatformName": ctx.Platform.Name(),
 		"PlatformSlug": ctx.Platform.Slug(),
-		"Module":       config.Name,
-		"SpecUpdated":  true,
-		"CodeUpdated":  len(filteredChanges) > 1,
+		"Name":         conf.Name,
 		"SpecDiff":     diff,
 		"Footer":       os.Getenv("PRIMEAPP_FOOTER_HIDE") != "true",
 		"FooterCustom": os.Getenv("PRIMEAPP_FOOTER_CUSTOM"),
@@ -125,8 +101,8 @@ func (n PrimeLibGenerateTask) Execute(ctx taskcommon.TaskContext) error {
 	}
 
 	// do not commit if only .openapi-generator/FILES changed
-	if len(filteredChanges) == 0 {
-		log.Info().Int("total-changes", len(changes)).Int("actual-changes", len(filteredChanges)).Msg("no changes detected, skipping commit and merge request")
+	if len(changes) == 0 {
+		log.Info().Int("total-changes", len(changes)).Msg("no changes detected, skipping commit and merge request")
 		return nil
 	}
 
@@ -139,29 +115,6 @@ func (n PrimeLibGenerateTask) Execute(ctx taskcommon.TaskContext) error {
 	return nil
 }
 
-func filterChanges(changes []string) []string {
-	var filtered []string
-
-	for _, change := range changes {
-		// .openapi-generator/FILES is a file that is always changed, so we can ignore it
-		if strings.HasSuffix(change, ".openapi-generator/FILES") {
-			continue
-		}
-
-		filtered = append(filtered, change)
-	}
-
-	return filtered
-}
-
-func NewTask() PrimeLibGenerateTask {
-	return PrimeLibGenerateTask{}
-}
-
-func toModuleName(input string) string {
-	if input != "" && input != "root" {
-		return strings.ToLower(input)
-	}
-
-	return ""
+func NewTask() SpecUpdateTask {
+	return SpecUpdateTask{}
 }

@@ -3,13 +3,10 @@ package createtag
 import (
 	_ "embed"
 	"fmt"
-	"os"
-	"path"
 
 	"github.com/cidverse/go-vcsapp/pkg/platform/api"
 	"github.com/cidverse/go-vcsapp/pkg/task/taskcommon"
-	"github.com/primelib/primelib-app/pkg/primelib"
-	"github.com/primelib/primelib-app/pkg/spec"
+	"github.com/primelib/primelib-app/pkg/config"
 	"github.com/primelib/primelib-app/pkg/util"
 	"github.com/rs/zerolog/log"
 )
@@ -24,27 +21,29 @@ func (n PrimeLibTagCreateTask) Name() string {
 
 // Execute runs the task
 func (n PrimeLibTagCreateTask) Execute(ctx taskcommon.TaskContext) error {
-	content, err := ctx.Platform.FileContent(ctx.Repository, ctx.Repository.DefaultBranch, "primelib.yaml")
+	content, err := ctx.Platform.FileContent(ctx.Repository, ctx.Repository.DefaultBranch, config.ConfigFileName)
 	if err != nil {
 		return fmt.Errorf("failed to get primelib.yaml content: %w", err)
 	}
 
 	// load config
-	config, err := primelib.ConfigFromString(content)
+	conf, err := config.ConfigFromString(content)
 	if err != nil {
 		return fmt.Errorf("failed to load primelib.yaml: %w", err)
 	}
 
 	// requires modules
-	if len(config.Modules) == 0 {
-		return fmt.Errorf("no modules found")
+	if conf.Generators.EnabledCount() == 0 {
+		return fmt.Errorf("no generators enabeld")
 	}
 
 	// skip if auto release is disabled
-	if !config.Release {
-		log.Debug().Str("repo", ctx.Repository.Namespace+"/"+ctx.Repository.Name).Msg("release creation is disabled, skipping")
-		return nil
-	}
+	/*
+		if !config.Release {
+			log.Debug().Str("repo", ctx.Repository.Namespace+"/"+ctx.Repository.Name).Msg("release creation is disabled, skipping")
+			return nil
+		}
+	*/
 
 	// check if last tag has a release
 	tagList, err := ctx.Platform.Tags(ctx.Repository, 5)
@@ -69,42 +68,45 @@ func (n PrimeLibTagCreateTask) Execute(ctx taskcommon.TaskContext) error {
 
 	// get next version
 	nextVersion := []string{"0.1.0"}
-	if lastRelease != nil {
-		for _, module := range config.Modules {
-			// get old version of spec file
-			oldFile, err := os.CreateTemp("", "primelib-spec")
-			if err != nil {
-				return fmt.Errorf("failed to create temp file: %w", err)
-			}
-			oldContent, err := ctx.Platform.FileContent(ctx.Repository, lastRelease.CommitHash, path.Join(module.Dir, module.SpecFile))
-			if err != nil {
-				return fmt.Errorf("failed to get spec file content: %w", err)
-			}
-			_, err = oldFile.WriteString(oldContent)
-			if err != nil {
-				return fmt.Errorf("failed to write to temp file: %w", err)
-			}
+	/*
+		if lastRelease != nil {
+			for _, module := range config.Modules {
+				specFile := path.Join(ctx.Directory, conf.Spec.File)
+				// get old version of spec file
+				oldFile, err := os.CreateTemp("", "primelib-spec")
+				if err != nil {
+					return fmt.Errorf("failed to create temp file: %w", err)
+				}
+				oldContent, err := ctx.Platform.FileContent(ctx.Repository, lastRelease.CommitHash, specFile)
+				if err != nil {
+					return fmt.Errorf("failed to get spec file content: %w", err)
+				}
+				_, err = oldFile.WriteString(oldContent)
+				if err != nil {
+					return fmt.Errorf("failed to write to temp file: %w", err)
+				}
 
-			// get new version of spec file
-			newFile, err := os.CreateTemp("", "primelib-spec")
-			if err != nil {
-				return fmt.Errorf("failed to create temp file: %w", err)
-			}
-			currentContent, err := ctx.Platform.FileContent(ctx.Repository, lastRelease.CommitHash, path.Join(module.Dir, module.SpecFile))
-			if err != nil {
-				return fmt.Errorf("failed to get spec file content: %w", err)
-			}
-			_, err = newFile.WriteString(currentContent)
+				// get new version of spec file
+				newFile, err := os.CreateTemp("", "primelib-spec")
+				if err != nil {
+					return fmt.Errorf("failed to create temp file: %w", err)
+				}
+				currentContent, err := ctx.Platform.FileContent(ctx.Repository, lastRelease.CommitHash, specFile)
+				if err != nil {
+					return fmt.Errorf("failed to get spec file content: %w", err)
+				}
+				_, err = newFile.WriteString(currentContent)
 
-			// determinate the next version number
-			version, err := spec.BumpVersion(module.SpecFormat, oldFile.Name(), newFile.Name(), lastRelease.Name)
-			if err != nil {
-				return fmt.Errorf("failed to bump version: %w", err)
-			}
+				// determinate the next version number
+				version, err := spec.BumpVersion(conf.Spec.Format, oldFile.Name(), newFile.Name(), lastRelease.Name)
+				if err != nil {
+					return fmt.Errorf("failed to bump version: %w", err)
+				}
 
-			nextVersion = append(nextVersion, version)
+				nextVersion = append(nextVersion, version)
+			}
 		}
-	}
+	*/
 
 	// find highest version
 	version := util.FindHighestVersion(nextVersion)
