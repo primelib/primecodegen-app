@@ -98,17 +98,32 @@ type Spec struct {
 	// File is the path to the openapi specification file
 	File string `yaml:"file" default:"openapi.yaml" required:"true"`
 	// Urls contains one or multiple urls to the openapi specifications, all documents will be merged
-	Urls []string `yaml:"urls" required:"true"`
+	Urls []SpecSource `yaml:"urls" required:"true"`
 	// Format is the format of the api specification
 	Format SpecType `yaml:"format" required:"true"`
 	// Patches are the patches that are applied to the openapi specification
 	Customization Customization `yaml:"customization"`
 }
 
-type SpecSource struct {
-	Name string `yaml:"name" required:"true"`
-	URL  string `yaml:"url" required:"true"`
+func (s Spec) UrlSlice() []string {
+	urls := make([]string, len(s.Urls))
+	for i, u := range s.Urls {
+		urls[i] = u.URL
+	}
+	return urls
 }
+
+type SpecSource struct {
+	URL    string     `yaml:"url" required:"true"`
+	Format SourceType `yaml:"format" default:"spec"`
+}
+
+type SourceType string
+
+const (
+	SourceTypeSpec      SourceType = "spec"
+	SourceTypeSwaggerUI SourceType = "swagger-ui"
+)
 
 type SpecType string
 

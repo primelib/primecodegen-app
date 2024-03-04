@@ -59,15 +59,15 @@ func updateLocal(dir string) {
 	}
 
 	// load config
-	config, err := config.ConfigFromString(string(bytes))
+	conf, err := config.ConfigFromString(string(bytes))
 	if err != nil {
 		log.Fatal().Err(err).Str("config-path", configPath).Msg("failed to parse primelib.yaml")
 	}
 
 	// for each module
-	log.Info().Str("dir", dir).Str("config", configPath).Msg("running local generation")
-	genErr := primelib.Update(dir, config, api.Repository{})
-	if genErr != nil {
-		log.Warn().Err(genErr).Msg("failed to generate code")
+	log.Info().Str("dir", dir).Str("config", configPath).Msg("running local update")
+	err = primelib.Update(dir, conf, api.Repository{})
+	if err != nil {
+		log.Warn().Err(err).Msg("failed to update spec")
 	}
 }

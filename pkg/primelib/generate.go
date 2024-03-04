@@ -13,7 +13,7 @@ import (
 func Generate(dir string, conf config.Configuration, repository api.Repository) error {
 	spec := conf.Spec
 	specFile := filepath.Join(dir, conf.Spec.File)
-	log.Debug().Strs("spec_urls", spec.Urls).Str("spec-file", specFile).Msg("processing module")
+	log.Debug().Strs("spec-urls", spec.UrlSlice()).Str("spec-file", specFile).Msg("processing module")
 
 	/*
 		if _, fileErr := os.Stat(configFile); os.IsNotExist(fileErr) {
