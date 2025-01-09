@@ -37,7 +37,7 @@ func (n SpecUpdateTask) Execute(ctx taskcommon.TaskContext) error {
 	}
 
 	// load config
-	conf, err := config.ConfigFromString(content)
+	conf, err := config.FromString(content)
 	if err != nil {
 		return fmt.Errorf("failed to load %s: %w", config.ConfigFileName, err)
 	}

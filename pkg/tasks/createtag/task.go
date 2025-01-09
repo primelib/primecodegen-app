@@ -27,7 +27,7 @@ func (n PrimeLibTagCreateTask) Execute(ctx taskcommon.TaskContext) error {
 	}
 
 	// load config
-	conf, err := config.ConfigFromString(content)
+	conf, err := config.FromString(content)
 	if err != nil {
 		return fmt.Errorf("failed to load primelib.yaml: %w", err)
 	}

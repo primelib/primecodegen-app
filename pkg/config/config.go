@@ -185,10 +185,10 @@ func LoadProjectConfig(file string) (Configuration, error) {
 		return Configuration{}, fmt.Errorf("failed to read %s: %w", file, err)
 	}
 
-	return ConfigFromString(string(bytes))
+	return FromString(string(bytes))
 }
 
-func ConfigFromString(content string) (Configuration, error) {
+func FromString(content string) (Configuration, error) {
 	var config Configuration
 	err := yaml.Unmarshal([]byte(content), &config)
 	if err != nil {

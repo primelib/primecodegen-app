@@ -2,7 +2,7 @@
 # image=ghcr.io/primelib/primelib-app
 
 # sponge cli
-FROM docker.io/ubuntu:23.10 AS sponge
+FROM docker.io/ubuntu:25.04 AS sponge
 
 RUN apt-get update && \
     apt-get install -y moreutils

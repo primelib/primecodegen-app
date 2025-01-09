@@ -59,7 +59,7 @@ func generateLocal(dir string) {
 	}
 
 	// load config
-	conf, err := config.ConfigFromString(string(bytes))
+	conf, err := config.FromString(string(bytes))
 	if err != nil {
 		log.Fatal().Err(err).Str("config-path", configPath).Msg("failed to parse primelib.yaml")
 	}

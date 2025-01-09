@@ -20,6 +20,8 @@ github.com/buger/jsonparser v1.1.1/go.mod h1:6RYKKt7H4d4+iWqouImQ9R2FZql3VbhNgx2
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
+github.com/cidverse/cidverseutils/core v0.0.0-20241219211714-77ae5cef4073 h1:3jICJZv+cO45V2EjHo8K2h7fXomS1XqJSp6UtKVd8O4=
+github.com/cidverse/cidverseutils/core v0.0.0-20241219211714-77ae5cef4073/go.mod h1:ce0txxfVVA+69HYQGpedk2W2TwRdsoLT5NFfZU8uuoI=
 github.com/cidverse/cidverseutils/zerologconfig v0.1.1 h1:+DU7kB7rNqPLIYIZtPtvHkMWSu9cenXpxcZuqZ7SZtY=
 github.com/cidverse/cidverseutils/zerologconfig v0.1.1/go.mod h1:ax/tFT2mPv9hNkNkcSyilwuvwzxw6v93R0GxMKEKsZg=
 github.com/cidverse/go-ptr v0.0.0-20240331160646-489e694bebbf h1:/DLETx+e0J8mWZyOOK8dAOMrdHUpJo8KQRuMt1IymtE=

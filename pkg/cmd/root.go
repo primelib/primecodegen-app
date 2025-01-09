@@ -35,6 +35,7 @@ func rootCmd() *cobra.Command {
 	cmd.AddCommand(updateCmd())
 	cmd.AddCommand(generateCmd())
 	cmd.AddCommand(releaseCmd())
+	cmd.AddCommand(listCmd())
 	cmd.AddCommand(versionCmd())
 
 	return cmd

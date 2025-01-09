@@ -4,6 +4,7 @@ go 1.23.4
 
 require (
 	github.com/Masterminds/semver/v3 v3.3.1
+	github.com/cidverse/cidverseutils/core v0.0.0-20241219211714-77ae5cef4073
 	github.com/cidverse/cidverseutils/zerologconfig v0.1.1
 	github.com/cidverse/go-vcsapp v0.0.0-20250108011539-5931ca75f5da
 	github.com/otiai10/copy v1.14.1
