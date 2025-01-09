@@ -4,8 +4,8 @@ go 1.23.4
 
 require (
 	github.com/Masterminds/semver/v3 v3.3.1
+	github.com/cidverse/cidverseutils/zerologconfig v0.1.1
 	github.com/cidverse/go-vcsapp v0.0.0-20250108011539-5931ca75f5da
-	github.com/mattn/go-colorable v0.1.13
 	github.com/otiai10/copy v1.14.1
 	github.com/pb33f/libopenapi v0.19.1
 	github.com/rs/zerolog v1.33.0
@@ -41,6 +41,7 @@ require (
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mmcloughlin/avo v0.6.0 // indirect
 	github.com/otiai10/mint v1.6.3 // indirect
