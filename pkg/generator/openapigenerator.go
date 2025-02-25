@@ -28,6 +28,7 @@ type OpenAPIGeneratorConfig struct {
 	EnablePostProcessFile bool                   `json:"enablePostProcessFile" yaml:"enablePostProcessFile"`
 	GlobalProperty        map[string]interface{} `json:"globalProperty" yaml:"globalProperty"`
 	AdditionalProperties  map[string]interface{} `json:"additionalProperties" yaml:"additionalProperties"`
+	IgnoreFiles           []string               `json:"ignoreFiles" yaml:"ignoreFiles"`
 }
 
 // openApiGeneratorArgumentAllowList is a list of arguments that are allowed to be passed to the openapi generator
@@ -77,6 +78,12 @@ func (n *OpenAPIGenerator) Generate() error {
 		return fmt.Errorf("failed to delete generated files: %w", err)
 	}
 
+	// write ignore file
+	err = n.writeIgnoreFilesFile()
+	if err != nil {
+		return err
+	}
+
 	// generate
 	err = n.generateCode()
 	if err != nil {
@@ -118,6 +125,19 @@ func (n *OpenAPIGenerator) deleteGeneratedFiles() error {
 		err = os.Remove(filepath.Join(n.Directory, file))
 		if err != nil {
 			return fmt.Errorf("failed to delete file %s: %w", file, err)
+		}
+	}
+
+	return nil
+}
+
+func (n *OpenAPIGenerator) writeIgnoreFilesFile() error {
+	ignoreFile := filepath.Join(n.Directory, ".openapi-generator-ignore")
+
+	if len(n.Config.IgnoreFiles) > 0 {
+		err := os.WriteFile(ignoreFile, []byte(strings.Join(n.Config.IgnoreFiles, "\n")), 0644)
+		if err != nil {
+			return err
 		}
 	}
 

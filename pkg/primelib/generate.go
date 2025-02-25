@@ -65,6 +65,10 @@ func Generate(dir string, conf config.Configuration, repository api.Repository) 
 		APISpec: specFile,
 		Opts:    conf.Presets.Go,
 	})
+	addGenerator(conf.Presets.Python.Enabled, "python", &preset.PythonLibraryGenerator{
+		APISpec: specFile,
+		Opts:    conf.Presets.Python,
+	})
 
 	// custom generators
 	for _, g := range conf.Generators {
