@@ -33,7 +33,7 @@ func (n PrimeLibTagCreateTask) Execute(ctx taskcommon.TaskContext) error {
 	}
 
 	// requires modules
-	if conf.Generators.EnabledCount() == 0 {
+	if !conf.HasGenerator() {
 		return fmt.Errorf("no generators enabeld")
 	}
 
@@ -98,7 +98,7 @@ func (n PrimeLibTagCreateTask) Execute(ctx taskcommon.TaskContext) error {
 				_, err = newFile.WriteString(currentContent)
 
 				// determinate the next version number
-				version, err := spec.BumpVersion(conf.Spec.Format, oldFile.Name(), newFile.Name(), lastRelease.Name)
+				version, err := spec.BumpVersion(conf.Spec.Type, oldFile.Name(), newFile.Name(), lastRelease.Name)
 				if err != nil {
 					return fmt.Errorf("failed to bump version: %w", err)
 				}

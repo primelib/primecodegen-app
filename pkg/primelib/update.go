@@ -20,7 +20,7 @@ import (
 func Update(dir string, conf config.Configuration, repository api.Repository) error {
 	spec := conf.Spec
 	specFile := filepath.Join(dir, conf.Spec.File)
-	log.Debug().Strs("spec-urls", spec.UrlSlice()).Str("spec-format", string(spec.Format)).Str("spec-file", specFile).Msg("processing module")
+	log.Debug().Strs("spec-urls", spec.UrlSlice()).Str("spec-format", string(spec.Type)).Str("spec-file", specFile).Msg("processing module")
 
 	// download spec sources
 	if len(spec.Urls) > 0 {
@@ -38,6 +38,11 @@ func Update(dir string, conf config.Configuration, repository api.Repository) er
 		bytes, err := yaml.Marshal(mergedData)
 		if err != nil {
 			return fmt.Errorf("failed to marshal api spec: %w", err)
+		}
+
+		// convert swagger to openapi
+		if spec.Type == config.SpecTypeSwagger2 {
+			//primecodegen openapi-convert
 		}
 
 		// open document and apply patches

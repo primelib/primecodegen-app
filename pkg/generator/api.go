@@ -4,7 +4,7 @@ import (
 	"github.com/cidverse/go-vcsapp/pkg/platform/api"
 )
 
-type GeneratorConfig struct {
+type Config struct {
 	Directory  string
 	Platform   api.Platform
 	Repository api.Repository

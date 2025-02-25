@@ -58,11 +58,19 @@ var openApiGeneratorArgumentAllowList = []string{
 }
 
 // Name returns the name of the task
-func (n OpenAPIGenerator) Name() string {
+func (n *OpenAPIGenerator) Name() string {
 	return "openapi-generator"
 }
 
-func (n OpenAPIGenerator) Generate() error {
+func (n *OpenAPIGenerator) SetOutputDirectory(dir string) {
+	n.Directory = dir
+}
+
+func (n *OpenAPIGenerator) GetOutputDirectory() string {
+	return n.Directory
+}
+
+func (n *OpenAPIGenerator) Generate() error {
 	// cleanup
 	err := n.deleteGeneratedFiles()
 	if err != nil {
@@ -78,7 +86,7 @@ func (n OpenAPIGenerator) Generate() error {
 	return nil
 }
 
-func (n OpenAPIGenerator) deleteGeneratedFiles() error {
+func (n *OpenAPIGenerator) deleteGeneratedFiles() error {
 	// check if .openapi-generator/FILES exists
 	filesDir := filepath.Join(n.Directory, ".openapi-generator", "FILES")
 	if _, err := os.Stat(filesDir); os.IsNotExist(err) {
@@ -116,7 +124,7 @@ func (n OpenAPIGenerator) deleteGeneratedFiles() error {
 	return nil
 }
 
-func (n OpenAPIGenerator) generateCode() error {
+func (n *OpenAPIGenerator) generateCode() error {
 	// auto generate config
 	tempConfigFile, tmpErr := os.CreateTemp("", "openapi-generator.json")
 	if tmpErr != nil {
@@ -163,33 +171,31 @@ func (n OpenAPIGenerator) generateCode() error {
 		}
 	}
 
-	generateSubCommand := "generate"
+	var args []string
 	if strings.HasPrefix(n.Config.GeneratorName, "primecodegen-") {
-		generateSubCommand = "prime-generate"
+		args = append(args, "prime-generate")
+		args = append(args, "-e", "auto")
+	} else {
+		args = append(args, "generate")
 	}
 
 	// primecodegen bin and args
-	executable := []string{"primecodegen"}
-	if binPath := os.Getenv("PRIMECODEGEN_BIN"); binPath != "" {
-		executable = strings.Fields(binPath)
+	executable := "openapi-generator-cli"
+	if binPath := os.Getenv("OPENAPI_GENERATOR_BIN"); binPath != "" {
+		executable = binPath
 	}
-	args := []string{
-		generateSubCommand,
-		"-e", "auto",
+	args = append(args, []string{
 		"-i", n.APISpec,
 		"-o", n.Directory,
 		"-c", configFile,
 		"--skip-validate-spec",
-	}
-	command := append(executable, args...)
-	command = append(command, n.Args...)
+	}...)
+	args = append(args, n.Args...)
 
-	cmd := exec.Command("bash", "-c", strings.Join(command, " "))
-	cmd.Env = []string{
-		"PATH=" + os.Getenv("PATH"),
-	}
+	cmd := exec.Command(executable, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	log.Trace().Str("command", cmd.String()).Msg("executing code generation")
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to execute code generation: %w", err)
 	}

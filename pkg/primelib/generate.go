@@ -7,6 +7,8 @@ import (
 	"github.com/cidverse/go-vcsapp/pkg/platform/api"
 	"github.com/primelib/primelib-app/pkg/config"
 	"github.com/primelib/primelib-app/pkg/generator"
+	"github.com/primelib/primelib-app/pkg/preset"
+	"github.com/primelib/primelib-app/pkg/util"
 	"github.com/rs/zerolog/log"
 )
 
@@ -46,27 +48,67 @@ func Generate(dir string, conf config.Configuration, repository api.Repository) 
 	addGenerator := func(enabled bool, langDir string, gen generator.Generator) {
 		if enabled {
 			targetDir := filepath.Join(dir, conf.Output)
-			if conf.Generators.MultiLanguage() {
+			if conf.MultiLanguage() {
 				targetDir = filepath.Join(targetDir, langDir)
 			}
 			gen.SetOutputDirectory(targetDir)
 			generators = append(generators, gen)
 		}
 	}
-	addGenerator(conf.Generators.Java.Enabled, "java", &generator.JavaLibraryGenerator{
+
+	// presets
+	addGenerator(conf.Presets.Java.Enabled, "java", &preset.JavaLibraryGenerator{
 		APISpec: specFile,
-		Opts:    conf.Generators.Java,
+		Opts:    conf.Presets.Java,
 	})
-	addGenerator(conf.Generators.Go.Enabled, "go", &generator.GoLibraryGenerator{
+	addGenerator(conf.Presets.Go.Enabled, "go", &preset.GoLibraryGenerator{
 		APISpec: specFile,
-		Opts:    conf.Generators.Go,
+		Opts:    conf.Presets.Go,
 	})
+
+	// custom generators
+	for _, g := range conf.Generators {
+		var gen generator.Generator
+		switch g.Type {
+		case config.GeneratorTypeOpenApiGenerator:
+			gen = &generator.OpenAPIGenerator{
+				APISpec: specFile,
+				Args:    g.Arguments,
+				Config: generator.OpenAPIGeneratorConfig{
+					GeneratorName:         util.GetMapString(g.Config, "generatorName", ""),
+					InvokerPackage:        util.GetMapString(g.Config, "invokerPackage", ""),
+					ApiPackage:            util.GetMapString(g.Config, "apiPackage", ""),
+					ModelPackage:          util.GetMapString(g.Config, "modelPackage", ""),
+					EnablePostProcessFile: util.GetMapBool(g.Config, "enablePostProcessFile", false),
+					GlobalProperty:        util.GetMapMap(g.Config, "globalProperty"),
+					AdditionalProperties:  util.GetMapMap(g.Config, "additionalProperties"),
+				},
+			}
+		case config.GeneratorTypePrimeCodeGen:
+			gen = &generator.PrimeCodeGenGenerator{
+				APISpec: specFile,
+				Args:    g.Arguments,
+				Config: generator.PrimeCodeGenGeneratorConfig{
+					TemplateLanguage: util.GetMapString(g.Config, "templateLanguage", ""),
+					TemplateType:     util.GetMapString(g.Config, "templateType", ""),
+					Patches:          util.GetMapSliceString(g.Config, "patches", []string{}),
+					GroupId:          util.GetMapString(g.Config, "groupId", ""),
+					ArtifactId:       util.GetMapString(g.Config, "artifactId", ""),
+				},
+			}
+		}
+
+		addGenerator(g.Enabled, g.Name, gen)
+	}
+
+	// execute generators
 	for _, gen := range generators {
-		log.Debug().Str("generator", gen.Name()).Msg("executing generator")
+		log.Info().Str("generator", gen.Name()).Msg("running code generator")
 		err := gen.Generate()
 		if err != nil {
 			return fmt.Errorf("failed to generate code: %w", err)
 		}
+		log.Info().Str("generator", gen.Name()).Msg("code generation completed")
 	}
 
 	return nil
