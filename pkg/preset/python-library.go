@@ -7,32 +7,26 @@ import (
 )
 
 type PythonLibraryGenerator struct {
-	Directory   string                       `json:"-" yaml:"-"`
 	APISpec     string                       `json:"-" yaml:"-"`
 	Repository  config.Repository            `json:"-" yaml:"-"`
 	Maintainers []config.Maintainer          `json:"-" yaml:"-"`
 	Opts        config.PythonLanguageOptions `json:"-" yaml:"-"`
 }
 
-// Name returns the name of the task
 func (n *PythonLibraryGenerator) Name() string {
 	return "python-httpclient"
 }
 
-func (n *PythonLibraryGenerator) SetOutputDirectory(dir string) {
-	n.Directory = dir
+func (n *PythonLibraryGenerator) GetOutputName() string {
+	return "python"
 }
 
-func (n *PythonLibraryGenerator) GetOutputDirectory() string {
-	return n.Directory
-}
-
-func (n *PythonLibraryGenerator) Generate() error {
-	log.Info().Str("dir", n.Directory).Str("spec", n.APISpec).Msg("generating python library")
+func (n *PythonLibraryGenerator) Generate(opts generator.GenerateOptions) error {
+	log.Info().Str("dir", opts.OutputDirectory).Str("spec", n.APISpec).Msg("generating python library")
 
 	gen := generator.OpenAPIGenerator{
-		Directory: n.Directory,
-		APISpec:   n.APISpec,
+		OutputName: n.GetOutputName(),
+		APISpec:    n.APISpec,
 		Config: generator.OpenAPIGeneratorConfig{
 			GeneratorName:         "python",
 			EnablePostProcessFile: false,
@@ -57,5 +51,5 @@ func (n *PythonLibraryGenerator) Generate() error {
 		},
 	}
 
-	return gen.Generate()
+	return gen.Generate(opts)
 }

@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"os"
 
 	"gopkg.in/yaml.v3"
 )
@@ -190,15 +189,6 @@ type GeneratorConfig struct {
 type GeneratorArgs struct {
 	// UserArgs are the arguments that are passed to the generator
 	OpenAPIGeneratorArgs []string `yaml:"openapi_generator"`
-}
-
-func LoadProjectConfig(file string) (Configuration, error) {
-	bytes, err := os.ReadFile(file)
-	if err != nil {
-		return Configuration{}, fmt.Errorf("failed to read %s: %w", file, err)
-	}
-
-	return FromString(string(bytes))
 }
 
 func FromString(content string) (Configuration, error) {

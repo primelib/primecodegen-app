@@ -11,10 +11,10 @@ import (
 )
 
 type PrimeCodeGenGenerator struct {
-	Directory string   `json:"-" yaml:"-"`
-	APISpec   string   `json:"-" yaml:"-"`
-	Args      []string `json:"-" yaml:"-"`
-	Config    PrimeCodeGenGeneratorConfig
+	OutputName string   `json:"-" yaml:"-"`
+	APISpec    string   `json:"-" yaml:"-"`
+	Args       []string `json:"-" yaml:"-"`
+	Config     PrimeCodeGenGeneratorConfig
 }
 
 type PrimeCodeGenGeneratorConfig struct {
@@ -30,23 +30,19 @@ func (n *PrimeCodeGenGenerator) Name() string {
 	return "primecodegen"
 }
 
-func (n *PrimeCodeGenGenerator) SetOutputDirectory(dir string) {
-	n.Directory = dir
+func (n *PrimeCodeGenGenerator) GetOutputName() string {
+	return n.OutputName
 }
 
-func (n *PrimeCodeGenGenerator) GetOutputDirectory() string {
-	return n.Directory
-}
-
-func (n *PrimeCodeGenGenerator) Generate() error {
+func (n *PrimeCodeGenGenerator) Generate(opts GenerateOptions) error {
 	// cleanup
-	err := n.deleteGeneratedFiles()
+	err := n.deleteGeneratedFiles(opts)
 	if err != nil {
 		return fmt.Errorf("failed to delete generated files: %w", err)
 	}
 
 	// generate
-	err = n.generateCode()
+	err = n.generateCode(opts)
 	if err != nil {
 		return fmt.Errorf("failed to generate code: %w", err)
 	}
@@ -54,9 +50,9 @@ func (n *PrimeCodeGenGenerator) Generate() error {
 	return nil
 }
 
-func (n *PrimeCodeGenGenerator) deleteGeneratedFiles() error {
+func (n *PrimeCodeGenGenerator) deleteGeneratedFiles(opts GenerateOptions) error {
 	// check if .openapi-generator/FILES exists
-	filesDir := filepath.Join(n.Directory, ".openapi-generator", "FILES")
+	filesDir := filepath.Join(opts.OutputDirectory, ".openapi-generator", "FILES")
 	if _, err := os.Stat(filesDir); os.IsNotExist(err) {
 		return nil
 	}
@@ -77,13 +73,13 @@ func (n *PrimeCodeGenGenerator) deleteGeneratedFiles() error {
 		}
 
 		// skip if file does not exist
-		if _, err := os.Stat(filepath.Join(n.Directory, file)); os.IsNotExist(err) {
+		if _, err := os.Stat(filepath.Join(opts.OutputDirectory, file)); os.IsNotExist(err) {
 			continue
 		}
 
 		// delete file
-		log.Trace().Str("path", filepath.Join(n.Directory, file)).Msg("deleting file")
-		err = os.Remove(filepath.Join(n.Directory, file))
+		log.Trace().Str("path", filepath.Join(opts.OutputDirectory, file)).Msg("deleting file")
+		err = os.Remove(filepath.Join(opts.OutputDirectory, file))
 		if err != nil {
 			return fmt.Errorf("failed to delete file %s: %w", file, err)
 		}
@@ -92,7 +88,7 @@ func (n *PrimeCodeGenGenerator) deleteGeneratedFiles() error {
 	return nil
 }
 
-func (n *PrimeCodeGenGenerator) generateCode() error {
+func (n *PrimeCodeGenGenerator) generateCode(opts GenerateOptions) error {
 	// primecodegen bin and args
 	executable := "primecodegen"
 	args := []string{
@@ -101,7 +97,7 @@ func (n *PrimeCodeGenGenerator) generateCode() error {
 		"-i", n.APISpec,
 		"-g", n.Config.TemplateLanguage,
 		"-t", n.Config.TemplateType,
-		"-o", n.Directory,
+		"-o", opts.OutputDirectory,
 		"--md-group-id", n.Config.GroupId,
 		"--md-artifact-id", n.Config.ArtifactId,
 	}

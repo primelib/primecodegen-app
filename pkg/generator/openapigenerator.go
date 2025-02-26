@@ -14,10 +14,10 @@ import (
 )
 
 type OpenAPIGenerator struct {
-	Directory string   `json:"-" yaml:"-"`
-	APISpec   string   `json:"-" yaml:"-"`
-	Args      []string `json:"-" yaml:"-"`
-	Config    OpenAPIGeneratorConfig
+	OutputName string   `json:"-" yaml:"-"`
+	APISpec    string   `json:"-" yaml:"-"`
+	Args       []string `json:"-" yaml:"-"`
+	Config     OpenAPIGeneratorConfig
 }
 
 type OpenAPIGeneratorConfig struct {
@@ -58,34 +58,29 @@ var openApiGeneratorArgumentAllowList = []string{
 	"DISABLE_ALL=true",
 }
 
-// Name returns the name of the task
 func (n *OpenAPIGenerator) Name() string {
 	return "openapi-generator"
 }
 
-func (n *OpenAPIGenerator) SetOutputDirectory(dir string) {
-	n.Directory = dir
+func (n *OpenAPIGenerator) GetOutputName() string {
+	return n.OutputName
 }
 
-func (n *OpenAPIGenerator) GetOutputDirectory() string {
-	return n.Directory
-}
-
-func (n *OpenAPIGenerator) Generate() error {
+func (n *OpenAPIGenerator) Generate(opts GenerateOptions) error {
 	// cleanup
-	err := n.deleteGeneratedFiles()
+	err := n.deleteGeneratedFiles(opts)
 	if err != nil {
 		return fmt.Errorf("failed to delete generated files: %w", err)
 	}
 
 	// write ignore file
-	err = n.writeIgnoreFilesFile()
+	err = n.writeIgnoreFilesFile(opts)
 	if err != nil {
 		return err
 	}
 
 	// generate
-	err = n.generateCode()
+	err = n.generateCode(opts)
 	if err != nil {
 		return fmt.Errorf("failed to generate code: %w", err)
 	}
@@ -93,9 +88,9 @@ func (n *OpenAPIGenerator) Generate() error {
 	return nil
 }
 
-func (n *OpenAPIGenerator) deleteGeneratedFiles() error {
+func (n *OpenAPIGenerator) deleteGeneratedFiles(opts GenerateOptions) error {
 	// check if .openapi-generator/FILES exists
-	filesDir := filepath.Join(n.Directory, ".openapi-generator", "FILES")
+	filesDir := filepath.Join(opts.OutputDirectory, ".openapi-generator", "FILES")
 	if _, err := os.Stat(filesDir); os.IsNotExist(err) {
 		return nil
 	}
@@ -116,13 +111,13 @@ func (n *OpenAPIGenerator) deleteGeneratedFiles() error {
 		}
 
 		// skip if file does not exist
-		if _, err := os.Stat(filepath.Join(n.Directory, file)); os.IsNotExist(err) {
+		if _, err := os.Stat(filepath.Join(opts.OutputDirectory, file)); os.IsNotExist(err) {
 			continue
 		}
 
 		// delete file
-		log.Trace().Str("path", filepath.Join(n.Directory, file)).Msg("deleting file")
-		err = os.Remove(filepath.Join(n.Directory, file))
+		log.Trace().Str("path", filepath.Join(opts.OutputDirectory, file)).Msg("deleting file")
+		err = os.Remove(filepath.Join(opts.OutputDirectory, file))
 		if err != nil {
 			return fmt.Errorf("failed to delete file %s: %w", file, err)
 		}
@@ -131,8 +126,8 @@ func (n *OpenAPIGenerator) deleteGeneratedFiles() error {
 	return nil
 }
 
-func (n *OpenAPIGenerator) writeIgnoreFilesFile() error {
-	ignoreFile := filepath.Join(n.Directory, ".openapi-generator-ignore")
+func (n *OpenAPIGenerator) writeIgnoreFilesFile(opts GenerateOptions) error {
+	ignoreFile := filepath.Join(opts.OutputDirectory, ".openapi-generator-ignore")
 
 	if len(n.Config.IgnoreFiles) > 0 {
 		err := os.WriteFile(ignoreFile, []byte(strings.Join(n.Config.IgnoreFiles, "\n")), 0644)
@@ -144,7 +139,7 @@ func (n *OpenAPIGenerator) writeIgnoreFilesFile() error {
 	return nil
 }
 
-func (n *OpenAPIGenerator) generateCode() error {
+func (n *OpenAPIGenerator) generateCode(opts GenerateOptions) error {
 	// auto generate config
 	tempConfigFile, tmpErr := os.CreateTemp("", "openapi-generator.json")
 	if tmpErr != nil {
@@ -153,7 +148,7 @@ func (n *OpenAPIGenerator) generateCode() error {
 	defer tempConfigFile.Close()
 
 	// config
-	configFile := path.Join(n.Directory, "openapi-generator.json")
+	configFile := path.Join(opts.OutputDirectory, "openapi-generator.json")
 	if _, fileErr := os.Stat(configFile); os.IsNotExist(fileErr) {
 		// set defaults and missing properties
 		n.Config.EnablePostProcessFile = true
@@ -206,7 +201,7 @@ func (n *OpenAPIGenerator) generateCode() error {
 	}
 	args = append(args, []string{
 		"-i", n.APISpec,
-		"-o", n.Directory,
+		"-o", opts.OutputDirectory,
 		"-c", configFile,
 		"--skip-validate-spec",
 	}...)

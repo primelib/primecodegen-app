@@ -10,10 +10,14 @@ type Config struct {
 	Repository api.Repository
 }
 
+type GenerateOptions struct {
+	ProjectDirectory string
+	OutputDirectory  string
+}
+
 // Generator provides a common interface for all generators
 type Generator interface {
-	Name() string
-	Generate() error
-	SetOutputDirectory(string)
-	GetOutputDirectory() string
+	Name() string                        // Name returns the name of the generator
+	GetOutputName() string               // GetOutputName returns the name of the output dir for e.g. multi-language SDKs
+	Generate(opts GenerateOptions) error // Generate runs the code generation
 }

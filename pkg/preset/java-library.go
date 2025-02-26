@@ -7,32 +7,26 @@ import (
 )
 
 type JavaLibraryGenerator struct {
-	Directory   string                     `json:"-" yaml:"-"`
 	APISpec     string                     `json:"-" yaml:"-"`
 	Repository  config.Repository          `json:"-" yaml:"-"`
 	Maintainers []config.Maintainer        `json:"-" yaml:"-"`
 	Opts        config.JavaLanguageOptions `json:"-" yaml:"-"`
 }
 
-// Name returns the name of the task
 func (n *JavaLibraryGenerator) Name() string {
 	return "java-httpclient"
 }
 
-func (n *JavaLibraryGenerator) SetOutputDirectory(dir string) {
-	n.Directory = dir
+func (n *JavaLibraryGenerator) GetOutputName() string {
+	return "java"
 }
 
-func (n *JavaLibraryGenerator) GetOutputDirectory() string {
-	return n.Directory
-}
-
-func (n *JavaLibraryGenerator) Generate() error {
-	log.Info().Str("dir", n.Directory).Str("spec", n.APISpec).Msg("generating java library")
+func (n *JavaLibraryGenerator) Generate(opts generator.GenerateOptions) error {
+	log.Info().Str("dir", opts.OutputDirectory).Str("spec", n.APISpec).Msg("generating java library")
 
 	gen := generator.PrimeCodeGenGenerator{
-		Directory: n.Directory,
-		APISpec:   n.APISpec,
+		OutputName: n.GetOutputName(),
+		APISpec:    n.APISpec,
 		Args: []string{
 			"--md-group-id", n.Opts.GroupId,
 			"--md-artifact-id", n.Opts.ArtifactId,
@@ -44,5 +38,5 @@ func (n *JavaLibraryGenerator) Generate() error {
 		},
 	}
 
-	return gen.Generate()
+	return gen.Generate(opts)
 }
