@@ -7,10 +7,10 @@ import (
 	"regexp"
 
 	"github.com/cidverse/go-vcsapp/pkg/platform/api"
-	"github.com/primelib/primelib-app/pkg/config"
-	"github.com/primelib/primelib-app/pkg/openapi"
-	"github.com/primelib/primelib-app/pkg/specutil"
-	"github.com/primelib/primelib-app/pkg/util"
+	"github.com/primelib/primecodegen-app/pkg/config"
+	"github.com/primelib/primecodegen-app/pkg/openapi"
+	"github.com/primelib/primecodegen-app/pkg/specutil"
+	"github.com/primelib/primecodegen-app/pkg/util"
 	"github.com/rs/zerolog/log"
 )
 

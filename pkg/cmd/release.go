@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/cidverse/go-vcsapp/pkg/task/taskcommon"
 	"github.com/cidverse/go-vcsapp/pkg/vcsapp"
-	"github.com/primelib/primelib-app/pkg/tasks/createtag"
+	"github.com/primelib/primecodegen-app/pkg/tasks/createtag"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )

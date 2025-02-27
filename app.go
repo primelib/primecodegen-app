@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/primelib/primelib-app/pkg/cmd"
+	"github.com/primelib/primecodegen-app/pkg/cmd"
 	"github.com/rs/zerolog/log"
 )
 

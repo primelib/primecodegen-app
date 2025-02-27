@@ -7,9 +7,9 @@ import (
 	"github.com/cidverse/go-vcsapp/pkg/platform/api"
 	"github.com/cidverse/go-vcsapp/pkg/task/taskcommon"
 	"github.com/cidverse/go-vcsapp/pkg/vcsapp"
-	"github.com/primelib/primelib-app/pkg/config"
-	"github.com/primelib/primelib-app/pkg/primelib"
-	"github.com/primelib/primelib-app/pkg/tasks/codegeneration"
+	"github.com/primelib/primecodegen-app/pkg/config"
+	"github.com/primelib/primecodegen-app/pkg/primelib"
+	"github.com/primelib/primecodegen-app/pkg/tasks/codegeneration"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )

@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 
 	"github.com/cidverse/go-vcsapp/pkg/platform/api"
-	"github.com/primelib/primelib-app/pkg/config"
-	"github.com/primelib/primelib-app/pkg/generator"
-	"github.com/primelib/primelib-app/pkg/preset"
+	"github.com/primelib/primecodegen-app/pkg/config"
+	"github.com/primelib/primecodegen-app/pkg/generator"
+	"github.com/primelib/primecodegen-app/pkg/preset"
 	"github.com/rs/zerolog/log"
 )
 

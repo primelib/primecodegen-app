@@ -1,4 +1,4 @@
-module github.com/primelib/primelib-app
+module github.com/primelib/primecodegen-app
 
 go 1.23.4
 

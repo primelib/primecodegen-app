@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/primelib/primelib-app/pkg/util"
+	"github.com/primelib/primecodegen-app/pkg/util"
 )
 
 type OpenAPIDiff struct {

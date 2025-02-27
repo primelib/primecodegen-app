@@ -9,7 +9,7 @@ import (
 	"github.com/pb33f/libopenapi/datamodel"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
 	v3 "github.com/pb33f/libopenapi/datamodel/high/v3"
-	"github.com/primelib/primelib-app/pkg/config"
+	"github.com/primelib/primecodegen-app/pkg/config"
 	"github.com/rs/zerolog/log"
 )
 

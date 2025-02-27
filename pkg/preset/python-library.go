@@ -1,8 +1,8 @@
 package preset
 
 import (
-	"github.com/primelib/primelib-app/pkg/config"
-	"github.com/primelib/primelib-app/pkg/generator"
+	"github.com/primelib/primecodegen-app/pkg/config"
+	"github.com/primelib/primecodegen-app/pkg/generator"
 	"github.com/rs/zerolog/log"
 )
 

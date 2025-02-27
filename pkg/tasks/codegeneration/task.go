@@ -13,9 +13,9 @@ import (
 	"github.com/cidverse/go-vcsapp/pkg/task/taskcommon"
 	"github.com/cidverse/go-vcsapp/pkg/vcsapp"
 	cp "github.com/otiai10/copy"
-	"github.com/primelib/primelib-app/pkg/config"
-	"github.com/primelib/primelib-app/pkg/primelib"
-	"github.com/primelib/primelib-app/pkg/specutil"
+	"github.com/primelib/primecodegen-app/pkg/config"
+	"github.com/primelib/primecodegen-app/pkg/primelib"
+	"github.com/primelib/primecodegen-app/pkg/specutil"
 	"github.com/rs/zerolog/log"
 )
 
