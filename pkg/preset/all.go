@@ -10,23 +10,35 @@ func Generators(specFile string, conf config.Configuration) []generator.Generato
 	var generators []generator.Generator
 
 	// presets
-	generators = addGeneratorIfEnabled(generators, conf.Presets.Java.Enabled, "java", conf, &JavaLibraryGenerator{
+	generators = addGeneratorIfEnabled(generators, conf.Presets.Java.Enabled, &JavaLibraryGenerator{
 		APISpec:     specFile,
 		Repository:  conf.Repository,
 		Maintainers: conf.Maintainers,
 		Opts:        conf.Presets.Java,
 	})
-	generators = addGeneratorIfEnabled(generators, conf.Presets.Go.Enabled, "go", conf, &GoLibraryGenerator{
+	generators = addGeneratorIfEnabled(generators, conf.Presets.Go.Enabled, &GoLibraryGenerator{
 		APISpec:     specFile,
 		Repository:  conf.Repository,
 		Maintainers: conf.Maintainers,
 		Opts:        conf.Presets.Go,
 	})
-	generators = addGeneratorIfEnabled(generators, conf.Presets.Python.Enabled, "python", conf, &PythonLibraryGenerator{
+	generators = addGeneratorIfEnabled(generators, conf.Presets.Python.Enabled, &PythonLibraryGenerator{
 		APISpec:     specFile,
 		Repository:  conf.Repository,
 		Maintainers: conf.Maintainers,
 		Opts:        conf.Presets.Python,
+	})
+	generators = addGeneratorIfEnabled(generators, conf.Presets.CSharp.Enabled, &CSharpLibraryGenerator{
+		APISpec:     specFile,
+		Repository:  conf.Repository,
+		Maintainers: conf.Maintainers,
+		Opts:        conf.Presets.CSharp,
+	})
+	generators = addGeneratorIfEnabled(generators, conf.Presets.Typescript.Enabled, &TypeScriptLibraryGenerator{
+		APISpec:     specFile,
+		Repository:  conf.Repository,
+		Maintainers: conf.Maintainers,
+		Opts:        conf.Presets.Typescript,
 	})
 
 	// custom generators
@@ -65,13 +77,13 @@ func Generators(specFile string, conf config.Configuration) []generator.Generato
 			continue
 		}
 
-		addGeneratorIfEnabled(generators, g.Enabled, g.Name, conf, gen)
+		addGeneratorIfEnabled(generators, g.Enabled, gen)
 	}
 
 	return generators
 }
 
-func addGeneratorIfEnabled(generators []generator.Generator, enabled bool, langDir string, conf config.Configuration, gen generator.Generator) []generator.Generator {
+func addGeneratorIfEnabled(generators []generator.Generator, enabled bool, gen generator.Generator) []generator.Generator {
 	if enabled {
 		return append(generators, gen)
 	}

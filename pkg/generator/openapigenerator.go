@@ -67,6 +67,9 @@ func (n *OpenAPIGenerator) GetOutputName() string {
 }
 
 func (n *OpenAPIGenerator) Generate(opts GenerateOptions) error {
+	// create dir
+	_ = os.MkdirAll(opts.OutputDirectory, os.ModePerm)
+
 	// cleanup
 	err := n.deleteGeneratedFiles(opts)
 	if err != nil {

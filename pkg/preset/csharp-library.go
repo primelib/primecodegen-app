@@ -6,41 +6,36 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type PythonLibraryGenerator struct {
+type CSharpLibraryGenerator struct {
 	APISpec     string                       `json:"-" yaml:"-"`
 	Repository  config.Repository            `json:"-" yaml:"-"`
 	Maintainers []config.Maintainer          `json:"-" yaml:"-"`
-	Opts        config.PythonLanguageOptions `json:"-" yaml:"-"`
+	Opts        config.CSharpLanguageOptions `json:"-" yaml:"-"`
 }
 
-func (n *PythonLibraryGenerator) Name() string {
-	return "python-httpclient"
+func (n *CSharpLibraryGenerator) Name() string {
+	return "csharp-httpclient"
 }
 
-func (n *PythonLibraryGenerator) GetOutputName() string {
-	return "python"
+func (n *CSharpLibraryGenerator) GetOutputName() string {
+	return "csharp"
 }
 
-func (n *PythonLibraryGenerator) Generate(opts generator.GenerateOptions) error {
-	log.Info().Str("dir", opts.OutputDirectory).Str("spec", n.APISpec).Msg("generating python library")
+func (n *CSharpLibraryGenerator) Generate(opts generator.GenerateOptions) error {
+	log.Info().Str("dir", opts.OutputDirectory).Str("spec", n.APISpec).Msg("generating csharp library")
 
 	gen := generator.OpenAPIGenerator{
 		OutputName: n.GetOutputName(),
 		APISpec:    n.APISpec,
 		Config: generator.OpenAPIGeneratorConfig{
-			GeneratorName:         "python",
+			GeneratorName:         "csharp",
 			EnablePostProcessFile: false,
 			GlobalProperty:        nil,
 			AdditionalProperties: map[string]interface{}{
-				"library":        "urllib3",
-				"projectName":    n.Repository.Name,
-				"packageName":    n.Opts.PypiPackageName,
-				"packageUrl":     n.Repository.URL,
-				"packageVersion": "",
+				"projectName": n.Repository.Name,
 			},
 			IgnoreFiles: []string{
 				"README.md",
-				"tox.ini",
 				".travis.yml",
 				"appveyor.yml",
 				".gitlab-ci.yml",

@@ -53,11 +53,12 @@ type Generator struct {
 	Config    map[string]interface{} `yaml:"config"`    // Config that is passed to the generator
 }
 
+// Presets are pre-configured generators for specific languages
 type Presets struct {
-	// Presets
 	Go         GoLanguageOptions         `yaml:"go"`
 	Java       JavaLanguageOptions       `yaml:"java"`
 	Python     PythonLanguageOptions     `yaml:"python"`
+	CSharp     CSharpLanguageOptions     `yaml:"csharp"`
 	Typescript TypescriptLanguageOptions `yaml:"typescript"`
 }
 
@@ -110,6 +111,11 @@ type PythonLanguageOptions struct {
 	IgnoreFiles []string `yaml:"ignoreFiles"`
 
 	PypiPackageName string `yaml:"pypiPackageName"`
+}
+
+type CSharpLanguageOptions struct {
+	Enabled     bool     `yaml:"enabled"`
+	IgnoreFiles []string `yaml:"ignoreFiles"`
 }
 
 type TypescriptLanguageOptions struct {

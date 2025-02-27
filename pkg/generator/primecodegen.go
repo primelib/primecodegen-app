@@ -35,6 +35,9 @@ func (n *PrimeCodeGenGenerator) GetOutputName() string {
 }
 
 func (n *PrimeCodeGenGenerator) Generate(opts GenerateOptions) error {
+	// create dir
+	_ = os.MkdirAll(opts.OutputDirectory, os.ModePerm)
+
 	// cleanup
 	err := n.deleteGeneratedFiles(opts)
 	if err != nil {
