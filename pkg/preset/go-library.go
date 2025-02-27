@@ -1,6 +1,7 @@
 package preset
 
 import (
+	"net/url"
 	"path/filepath"
 	"strings"
 
@@ -25,15 +26,7 @@ func (n *GoLibraryGenerator) GetOutputName() string {
 }
 
 func (n *GoLibraryGenerator) Generate(opts generator.GenerateOptions) error {
-	moduleName := n.Opts.ModuleName
-	if moduleName == "" {
-		moduleName = strings.TrimPrefix(n.Repository.URL, "https://")
-
-		relPath, err := filepath.Rel(opts.ProjectDirectory, opts.OutputDirectory)
-		if err == nil && relPath != "." {
-			moduleName = filepath.Join(moduleName, relPath)
-		}
-	}
+	moduleName := suggestGoModuleName(n.Opts.ModuleName, n.Repository, opts.ProjectDirectory, opts.OutputDirectory)
 
 	log.Info().Str("dir", opts.OutputDirectory).Str("spec", n.APISpec).Msg("generating go library")
 	gen := generator.PrimeCodeGenGenerator{
@@ -50,4 +43,28 @@ func (n *GoLibraryGenerator) Generate(opts generator.GenerateOptions) error {
 	}
 
 	return gen.Generate(opts)
+}
+
+func suggestGoModuleName(moduleName string, repository config.Repository, projectDirectory string, outputDirectory string) string {
+	if moduleName != "" {
+		return moduleName
+	}
+
+	// trim protocol prefix
+	parsedURL, err := url.Parse(repository.URL)
+	if err != nil {
+		return "example.com/unknown-module"
+	}
+	moduleName = parsedURL.Host + parsedURL.Path
+
+	// append relative path in case output directory is not the project directory
+	relPath, err := filepath.Rel(projectDirectory, outputDirectory)
+	if err == nil && relPath != "." {
+		moduleName = filepath.Join(moduleName, relPath)
+	}
+
+	// replace all backslashes with forward slashes
+	moduleName = strings.ReplaceAll(moduleName, "\\", "/")
+
+	return moduleName
 }
