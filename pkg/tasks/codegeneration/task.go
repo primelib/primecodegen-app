@@ -15,7 +15,7 @@ import (
 	cp "github.com/otiai10/copy"
 	"github.com/primelib/primelib-app/pkg/config"
 	"github.com/primelib/primelib-app/pkg/primelib"
-	"github.com/primelib/primelib-app/pkg/spec"
+	"github.com/primelib/primelib-app/pkg/specutil"
 	"github.com/rs/zerolog/log"
 )
 
@@ -92,7 +92,7 @@ func (n PrimeLibGenerateTask) Execute(ctx taskcommon.TaskContext) error {
 	}
 
 	// store updated spec file
-	diff, err := spec.DiffSpec("openapi", originalSpecFile.Name(), specFile)
+	diff, err := specutil.DiffSpec("openapi", originalSpecFile.Name(), specFile)
 	if err != nil {
 		log.Warn().Err(err).Msg("failed to diff spec file")
 	}

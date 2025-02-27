@@ -102,22 +102,6 @@ func PatchDocument(document libopenapi.Document, specType string, specFormat str
 				})
 			}
 		}
-
-		/*
-			keys := []string{}
-			for pair := model.Paths.PathItems.Oldest(); pair != nil; pair = pair.Next() {
-				fmt.Printf("%s => %+v\n\n\n\n", pair.Key, pair.Value)
-				keys = append(keys, pair.Key)
-			}
-
-			for _, k := range keys {
-				model.Paths.PathItems.Delete(k)
-			}
-
-		*/
-
-		// operationId format
-
 	}
 
 	return document

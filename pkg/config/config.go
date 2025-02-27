@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 )
@@ -129,25 +130,43 @@ type TypescriptLanguageOptions struct {
 type Spec struct {
 	// File is the path to the openapi specification file
 	File string `yaml:"file" default:"openapi.yaml" required:"true"`
-	// Urls contains one or multiple urls to the openapi specifications, all documents will be merged
-	Urls []SpecSource `yaml:"urls" required:"true"`
+	// SourcesDir is the directory where specifications are stored
+	SourcesDir string `yaml:"sourcesDir"`
+	// Sources contains one or multiple sources to specifications
+	Sources []SpecSource `yaml:"sources" required:"true"`
 	// Type is the format of the api specification
 	Type SpecType `yaml:"type" required:"true"`
-	// Patches are the patches that are applied to the openapi specification
+	// Customization allows overwriting certain parts of the specification
 	Customization Customization `yaml:"customization"`
+	// Patches are the patches that are applied to the specification
+	Patches []string `yaml:"patches"`
 }
 
 func (s Spec) UrlSlice() []string {
-	urls := make([]string, len(s.Urls))
-	for i, u := range s.Urls {
+	urls := make([]string, len(s.Sources))
+	for i, u := range s.Sources {
 		urls[i] = u.URL
 	}
 	return urls
 }
 
+func (s Spec) GetSourcesDir(rootDir string) string {
+	if s.SourcesDir == "" {
+		return rootDir
+	}
+
+	if filepath.IsAbs(s.SourcesDir) {
+		return s.SourcesDir
+	}
+
+	return filepath.Join(rootDir, s.SourcesDir)
+}
+
 type SpecSource struct {
-	URL    string     `yaml:"url" required:"true"`
+	File   string     `yaml:"file"` // File path to the openapi specification
+	URL    string     `yaml:"url"`  // URL to the openapi specification
 	Format SourceType `yaml:"format" default:"spec"`
+	Type   SpecType   `yaml:"type"`
 }
 
 type Customization struct {
@@ -213,9 +232,9 @@ func FromString(content string) (Configuration, error) {
 	}
 
 	// spec defaults
-	for i, _ := range config.Spec.Urls {
-		if config.Spec.Urls[i].Format == "" {
-			config.Spec.Urls[i].Format = SourceTypeSpec
+	for i, _ := range config.Spec.Sources {
+		if config.Spec.Sources[i].Format == "" {
+			config.Spec.Sources[i].Format = SourceTypeSpec
 		}
 	}
 	if config.Spec.Customization.Title == "" {
