@@ -6,7 +6,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.3.1
 	github.com/cidverse/cidverseutils/core v0.0.0-20250210224234-b2040fc3a6b4
 	github.com/cidverse/cidverseutils/zerologconfig v0.1.1
-	github.com/cidverse/go-vcsapp v0.0.0-20250221184007-e3018ec61491
+	github.com/cidverse/go-vcsapp v0.0.0-20250227175019-5d2e3a417e89
 	github.com/otiai10/copy v1.14.1
 	github.com/pb33f/libopenapi v0.21.7
 	github.com/rs/zerolog v1.33.0
@@ -18,19 +18,19 @@ require (
 require (
 	dario.cat/mergo v1.0.1 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
-	github.com/ProtonMail/go-crypto v1.1.5 // indirect
+	github.com/ProtonMail/go-crypto v1.1.6 // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/bradleyfalzon/ghinstallation/v2 v2.14.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/cidverse/go-ptr v0.0.0-20240331160646-489e694bebbf // indirect
-	github.com/cidverse/go-vcs v0.0.0-20250217213613-f5cbb063737e // indirect
+	github.com/cidverse/go-vcs v0.0.0-20250227174958-f70c3e161d9e // indirect
 	github.com/cloudflare/circl v1.6.0 // indirect
 	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
 	github.com/go-git/go-billy/v5 v5.6.2 // indirect
-	github.com/go-git/go-git/v5 v5.13.2 // indirect
+	github.com/go-git/go-git/v5 v5.14.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/google/go-github/v69 v69.2.0 // indirect

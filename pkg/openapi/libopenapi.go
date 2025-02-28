@@ -1,10 +1,6 @@
 package openapi
 
 import (
-	"fmt"
-	"os"
-	"path/filepath"
-
 	"github.com/pb33f/libopenapi"
 	"github.com/pb33f/libopenapi/datamodel"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
@@ -12,30 +8,6 @@ import (
 	"github.com/primelib/primecodegen-app/pkg/config"
 	"github.com/rs/zerolog/log"
 )
-
-func OpenDocumentFile(file string) (libopenapi.Document, error) {
-	// read the file
-	input, err := os.ReadFile(file)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read spec file: %w", err)
-	}
-
-	// config
-	conf := datamodel.DocumentConfiguration{
-		AllowFileReferences:   true,
-		AllowRemoteReferences: true,
-		BasePath:              filepath.Dir(file),
-		//BaseURL:               baseURL,
-	}
-
-	// create a new document from specification bytes
-	document, err := libopenapi.NewDocumentWithConfiguration(input, &conf)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to create document from spec")
-	}
-
-	return document, nil
-}
 
 func OpenDocument(input []byte) (libopenapi.Document, error) {
 	// config
