@@ -70,14 +70,8 @@ func (n *OpenAPIGenerator) Generate(opts GenerateOptions) error {
 	// create dir
 	_ = os.MkdirAll(opts.OutputDirectory, os.ModePerm)
 
-	// cleanup
-	err := n.deleteGeneratedFiles(opts)
-	if err != nil {
-		return fmt.Errorf("failed to delete generated files: %w", err)
-	}
-
 	// write ignore file
-	err = n.writeIgnoreFilesFile(opts)
+	err := n.writeIgnoreFilesFile(opts)
 	if err != nil {
 		return err
 	}
@@ -86,44 +80,6 @@ func (n *OpenAPIGenerator) Generate(opts GenerateOptions) error {
 	err = n.generateCode(opts)
 	if err != nil {
 		return fmt.Errorf("failed to generate code: %w", err)
-	}
-
-	return nil
-}
-
-func (n *OpenAPIGenerator) deleteGeneratedFiles(opts GenerateOptions) error {
-	// check if .openapi-generator/FILES exists
-	filesDir := filepath.Join(opts.OutputDirectory, ".openapi-generator", "FILES")
-	if _, err := os.Stat(filesDir); os.IsNotExist(err) {
-		return nil
-	}
-
-	// read file list
-	bytes, err := os.ReadFile(filesDir)
-	if err != nil {
-		return fmt.Errorf("failed to read %s: %w", filesDir, err)
-	}
-
-	// iterate over files
-	files := strings.Split(string(bytes), "\n")
-	log.Info().Int("count", len(files)).Msg("deleting generated files")
-	for _, file := range files {
-		// skip empty lines
-		if file == "" {
-			continue
-		}
-
-		// skip if file does not exist
-		if _, err := os.Stat(filepath.Join(opts.OutputDirectory, file)); os.IsNotExist(err) {
-			continue
-		}
-
-		// delete file
-		log.Trace().Str("path", filepath.Join(opts.OutputDirectory, file)).Msg("deleting file")
-		err = os.Remove(filepath.Join(opts.OutputDirectory, file))
-		if err != nil {
-			return fmt.Errorf("failed to delete file %s: %w", file, err)
-		}
 	}
 
 	return nil
@@ -211,6 +167,7 @@ func (n *OpenAPIGenerator) generateCode(opts GenerateOptions) error {
 	args = append(args, n.Args...)
 
 	cmd := exec.Command(executable, args...)
+	cmd.Dir = opts.ProjectDirectory
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	log.Trace().Str("command", cmd.String()).Msg("executing code generation")
