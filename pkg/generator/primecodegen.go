@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/primelib/primecodegen-app/pkg/config"
 	"github.com/rs/zerolog/log"
 )
 
@@ -16,11 +17,13 @@ type PrimeCodeGenGenerator struct {
 }
 
 type PrimeCodeGenGeneratorConfig struct {
-	TemplateLanguage string   `json:"templateLanguage" yaml:"templateLanguage"`
-	TemplateType     string   `json:"templateType" yaml:"templateType"`
-	Patches          []string `json:"patches" yaml:"patches"`
-	GroupId          string   `json:"groupId" yaml:"groupId"`
-	ArtifactId       string   `json:"artifactId" yaml:"artifactId"`
+	TemplateLanguage string              `json:"templateLanguage" yaml:"templateLanguage"`
+	TemplateType     string              `json:"templateType" yaml:"templateType"`
+	Patches          []string            `json:"patches" yaml:"patches"`
+	GroupId          string              `json:"groupId" yaml:"groupId"`
+	ArtifactId       string              `json:"artifactId" yaml:"artifactId"`
+	Repository       config.Repository   `json:"repository" yaml:"repository"`
+	Maintainers      []config.Maintainer `json:"maintainers" yaml:"maintainers"`
 }
 
 // Name returns the name of the task
@@ -55,8 +58,18 @@ func (n *PrimeCodeGenGenerator) generateCode(opts GenerateOptions) error {
 		"-g", n.Config.TemplateLanguage,
 		"-t", n.Config.TemplateType,
 		"-o", opts.OutputDirectory,
-		"--md-group-id", n.Config.GroupId,
-		"--md-artifact-id", n.Config.ArtifactId,
+	}
+	if n.Config.GroupId != "" {
+		args = append(args, "--md-group-id", n.Config.GroupId)
+	}
+	if n.Config.ArtifactId != "" {
+		args = append(args, "--md-artifact-id", n.Config.ArtifactId)
+	}
+	if n.Config.Repository.LicenseName != "" {
+		args = append(args, "--md-license-name", n.Config.Repository.LicenseName)
+	}
+	if n.Config.Repository.LicenseURL != "" {
+		args = append(args, "--md-license-url", n.Config.Repository.LicenseURL)
 	}
 	for _, p := range n.Config.Patches {
 		args = append(args, "--patches", p)

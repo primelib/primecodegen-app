@@ -10,6 +10,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/primelib/primecodegen-app/pkg/config"
 	"github.com/rs/zerolog/log"
 )
 
@@ -29,6 +30,8 @@ type OpenAPIGeneratorConfig struct {
 	GlobalProperty        map[string]interface{} `json:"globalProperty" yaml:"globalProperty"`
 	AdditionalProperties  map[string]interface{} `json:"additionalProperties" yaml:"additionalProperties"`
 	IgnoreFiles           []string               `json:"ignoreFiles" yaml:"ignoreFiles"`
+	Repository            config.Repository      `json:"repository" yaml:"repository"`
+	Maintainers           []config.Maintainer    `json:"maintainers" yaml:"maintainers"`
 }
 
 // openApiGeneratorArgumentAllowList is a list of arguments that are allowed to be passed to the openapi generator

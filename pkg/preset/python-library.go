@@ -49,6 +49,8 @@ func (n *PythonLibraryGenerator) Generate(opts generator.GenerateOptions) error 
 				".github/*",
 				"docs/*",
 			},
+			Repository:  n.Repository,
+			Maintainers: n.Maintainers,
 		},
 	}
 

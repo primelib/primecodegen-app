@@ -44,6 +44,8 @@ func (n *TypeScriptLibraryGenerator) Generate(opts generator.GenerateOptions) er
 				".github/*",
 				"docs/*",
 			},
+			Repository:  n.Repository,
+			Maintainers: n.Maintainers,
 		},
 	}
 

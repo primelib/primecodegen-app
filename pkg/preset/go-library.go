@@ -32,13 +32,14 @@ func (n *GoLibraryGenerator) Generate(opts generator.GenerateOptions) error {
 	gen := generator.PrimeCodeGenGenerator{
 		OutputName: n.GetOutputName(),
 		APISpec:    n.APISpec,
-		Args: []string{
-			"--md-artifact-id", moduleName,
-		},
+		Args:       []string{},
 		Config: generator.PrimeCodeGenGeneratorConfig{
 			TemplateLanguage: "go",
 			TemplateType:     "httpclient",
 			Patches:          []string{},
+			ArtifactId:       moduleName,
+			Repository:       n.Repository,
+			Maintainers:      n.Maintainers,
 		},
 	}
 

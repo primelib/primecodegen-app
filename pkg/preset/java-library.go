@@ -33,14 +33,15 @@ func (n *JavaLibraryGenerator) Generate(opts generator.GenerateOptions) error {
 	gen := generator.PrimeCodeGenGenerator{
 		OutputName: n.GetOutputName(),
 		APISpec:    n.APISpec,
-		Args: []string{
-			"--md-group-id", groupId,
-			"--md-artifact-id", artifactId,
-		},
+		Args:       []string{},
 		Config: generator.PrimeCodeGenGeneratorConfig{
 			TemplateLanguage: "java",
 			TemplateType:     "httpclient",
 			Patches:          []string{},
+			GroupId:          groupId,
+			ArtifactId:       artifactId,
+			Repository:       n.Repository,
+			Maintainers:      n.Maintainers,
 		},
 	}
 
