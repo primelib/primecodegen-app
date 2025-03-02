@@ -6,7 +6,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.3.1
 	github.com/cidverse/cidverseutils/core v0.0.0-20250210224234-b2040fc3a6b4
 	github.com/cidverse/cidverseutils/zerologconfig v0.1.1
-	github.com/cidverse/go-vcsapp v0.0.0-20250227175019-5d2e3a417e89
+	github.com/cidverse/go-vcsapp v0.0.0-20250302000214-bd3acf8202e0
 	github.com/otiai10/copy v1.14.1
 	github.com/pb33f/libopenapi v0.21.7
 	github.com/rs/zerolog v1.33.0
@@ -52,7 +52,7 @@ require (
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.9-0.20240815153524-6ea36470d1bd // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
-	gitlab.com/gitlab-org/api/client-go v0.123.0 // indirect
+	gitlab.com/gitlab-org/api/client-go v0.124.0 // indirect
 	golang.org/x/crypto v0.35.0 // indirect
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f // indirect
 	golang.org/x/net v0.35.0 // indirect

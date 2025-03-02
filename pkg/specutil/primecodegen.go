@@ -31,7 +31,7 @@ func ConvertSwaggerToOpenAPI(file string) error {
 	return nil
 }
 
-func MergeAndPatchOpenAPI(files []string, patches []string, outputFile string) error {
+func MergeAndPatchOpenAPI(files []string, inputPatches []string, patches []string, outputFile string) error {
 	args := []string{
 		"--log-level", "trace",
 		"openapi-patch",
@@ -40,8 +40,11 @@ func MergeAndPatchOpenAPI(files []string, patches []string, outputFile string) e
 	for _, f := range files {
 		args = append(args, "-i", f)
 	}
+	for _, p := range inputPatches {
+		args = append(args, "--input-patch", p)
+	}
 	for _, p := range patches {
-		args = append(args, "-p", p)
+		args = append(args, "--patch", p)
 	}
 	cmd := exec.Command("primecodegen", args...)
 	cmd.Stderr = os.Stderr

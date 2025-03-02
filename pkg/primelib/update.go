@@ -85,7 +85,7 @@ func Update(dir string, conf config.Configuration, repository api.Repository) er
 		// merge and patch
 		log.Debug().Strs("files", specFiles).Str("output", specFile).Msg("merging and patching openapi spec")
 		_ = os.Remove(specFile)
-		err := specutil.MergeAndPatchOpenAPI(specFiles, spec.Patches, specFile)
+		err := specutil.MergeAndPatchOpenAPI(specFiles, spec.InputPatches, spec.Patches, specFile)
 		if err != nil {
 			return err
 		}

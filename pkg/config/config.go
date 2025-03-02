@@ -138,6 +138,8 @@ type Spec struct {
 	Type SpecType `yaml:"type" required:"true"`
 	// Customization allows overwriting certain parts of the specification
 	Customization Customization `yaml:"customization"`
+	// InputPatches are applied to the source specifications before merging
+	InputPatches []string `yaml:"inputPatches"`
 	// Patches are the patches that are applied to the specification
 	Patches []string `yaml:"patches"`
 }

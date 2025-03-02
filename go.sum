@@ -25,8 +25,8 @@ github.com/cidverse/go-ptr v0.0.0-20240331160646-489e694bebbf h1:/DLETx+e0J8mWZy
 github.com/cidverse/go-ptr v0.0.0-20240331160646-489e694bebbf/go.mod h1:nvQPqid2KB17xXiiFp/Fhd+dO5lusCSuBQtOXfsd+mk=
 github.com/cidverse/go-vcs v0.0.0-20250227174958-f70c3e161d9e h1:Lf7Zfj1PZBtc0xRu3W2LJJqG5t12P5OopKW2JPXSIM0=
 github.com/cidverse/go-vcs v0.0.0-20250227174958-f70c3e161d9e/go.mod h1:lvQ6FBaZypoSSxoQKxb7Z3kAqEAfLEzkkBzNCmF5dCg=
-github.com/cidverse/go-vcsapp v0.0.0-20250227175019-5d2e3a417e89 h1:u8CcyG8USKkX0Pb9f3D4t58zTvIUhLOf0yCU3SbeiJY=
-github.com/cidverse/go-vcsapp v0.0.0-20250227175019-5d2e3a417e89/go.mod h1:9H0qbJUBH15iuO4kblTfiYSujsAlVBagd6e4l43wbFY=
+github.com/cidverse/go-vcsapp v0.0.0-20250302000214-bd3acf8202e0 h1:CjDPrzjBPaIn4JrnuTmL+BO7T0qOJbdYRYjWarYqaAA=
+github.com/cidverse/go-vcsapp v0.0.0-20250302000214-bd3acf8202e0/go.mod h1:uRD4FEh4ixPygVhWCfjdkzVrG2t4u2so841fcWiqKh8=
 github.com/cloudflare/circl v1.6.0 h1:cr5JKic4HI+LkINy2lg3W2jF8sHCVTBncJr5gIIq7qk=
 github.com/cloudflare/circl v1.6.0/go.mod h1:uddAzsPgqdMAYatqJ0lsjX1oECcQLIlRpzZh3pJrofs=
 github.com/coreos/go-systemd/v22 v22.5.0/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
@@ -132,8 +132,8 @@ github.com/wk8/go-ordered-map/v2 v2.1.9-0.20240815153524-6ea36470d1bd h1:dLuIF2k
 github.com/wk8/go-ordered-map/v2 v2.1.9-0.20240815153524-6ea36470d1bd/go.mod h1:DbzwytT4g/odXquuOCqroKvtxxldI4nb3nuesHF/Exo=
 github.com/xanzy/ssh-agent v0.3.3 h1:+/15pJfg/RsTxqYcX6fHqOXZwwMP+2VyYWJeWM2qQFM=
 github.com/xanzy/ssh-agent v0.3.3/go.mod h1:6dzNDKs0J9rVPHPhaGCukekBHKqfl+L3KghI1Bc68Uw=
-gitlab.com/gitlab-org/api/client-go v0.123.0 h1:W3LZ5QNyiSCJA0Zchkwz8nQIUzOuDoSWMZtRDT5DjPI=
-gitlab.com/gitlab-org/api/client-go v0.123.0/go.mod h1:Jh0qjLILEdbO6z/OY94RD+3NDQRUKiuFSFYozN6cpKM=
+gitlab.com/gitlab-org/api/client-go v0.124.0 h1:6i/uAl3QZur0F4S+42d9/k8y1Lf+htPqQ9YgXZJ2oQI=
+gitlab.com/gitlab-org/api/client-go v0.124.0/go.mod h1:Jh0qjLILEdbO6z/OY94RD+3NDQRUKiuFSFYozN6cpKM=
 golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
 golang.org/x/crypto v0.35.0 h1:b15kiHdrGCHrP6LvwaQ3c03kgNhhiMgvlhxHQhmg2Xs=
 golang.org/x/crypto v0.35.0/go.mod h1:dy7dXNW32cAb/6/PRuTNsix8T+vJAqvuIy5Bli/x0YQ=
