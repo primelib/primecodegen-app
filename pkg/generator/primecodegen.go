@@ -6,6 +6,7 @@ import (
 	"os/exec"
 
 	"github.com/primelib/primecodegen-app/pkg/config"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -51,14 +52,19 @@ func (n *PrimeCodeGenGenerator) Generate(opts GenerateOptions) error {
 func (n *PrimeCodeGenGenerator) generateCode(opts GenerateOptions) error {
 	// primecodegen bin and args
 	executable := "primecodegen"
-	args := []string{
-		"--log-level", "trace",
+	var args []string
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		args = append(args, "--log-level", "debug")
+	} else if zerolog.GlobalLevel() == zerolog.TraceLevel {
+		args = append(args, "--log-level", "trace")
+	}
+	args = append(args, []string{
 		"openapi-generate",
 		"-i", n.APISpec,
 		"-g", n.Config.TemplateLanguage,
 		"-t", n.Config.TemplateType,
 		"-o", opts.OutputDirectory,
-	}
+	}...)
 	if n.Config.GroupId != "" {
 		args = append(args, "--md-group-id", n.Config.GroupId)
 	}
